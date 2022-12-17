@@ -1,0 +1,51 @@
+    
+from fastapi import Depends, APIRouter, HTTPException
+from fastapi import HTTPException
+from db import ActiveSession
+from sqlalchemy.orm import Session
+from auth import get_current_active_user
+from settings import UserSchema
+from functions.drug import *
+from models.drug import *
+from schemas.drug import *
+
+drug_router = APIRouter(tags=['Drug Endpoint'])
+
+
+@drug_router.get("/drugs", description="This router returns list of the drugs using pagination")
+async def get_drugs_list(
+    page: int = 1,
+    limit: int = 10,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if not usr.role in ['any_role']:
+        return get_all_drugs(page, limit, usr, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")
+
+
+@drug_router.post("/drug/create", description="This router is able to add new drug and return drug id")
+async def create_new_drug(
+    form_data: NewDrug,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if not usr.role in ['any_role']:
+        return create_drug(form_data, usr, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")
+
+
+@drug_router.put("/drug/{id}/update", description="This router is able to update drug")
+async def update_one_drug(
+    id: int,
+    form_data: NewDrug,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if not usr.role in ['any_role']:
+        return update_drug(id, form_data, usr, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")       
+    

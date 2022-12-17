@@ -1,0 +1,86 @@
+    
+from fastapi import HTTPException
+from models.user import User
+from auth import get_password_hash
+
+
+def get_count_users(usr, db):
+
+    return db.query(User).count()
+
+
+def get_all_users(page, limit, usr, db):    
+
+    if page == 1 or page < 1:
+        offset = 0
+    else:
+        offset = (page-1) * limit
+
+    return db.query(User).order_by(User.id.desc()).offset(offset).limit(limit).all()
+
+
+def read_user(id, usr, db):
+
+    this_user = db.query(User).filter(User.id == id).first()
+
+    if this_user:
+        return this_user
+    else:
+        raise HTTPException(status_code=404, detail="User was not found!")
+
+
+def create_user(form_data, usr, db):
+
+    new_user = User(
+        name=form_data.name,
+        role=form_data.role,
+        phone=form_data.phone,
+        username=form_data.username,
+        password_hash=get_password_hash(form_data.password_hash),
+        disabled=form_data.disabled,
+    )
+
+    db.add(new_user)
+
+    db.commit()
+    return new_user.id
+
+
+def update_user(id, form_data, usr, db):
+
+    this_user = db.query(User).filter(User.id == id)
+
+    if this_user.first():
+
+        if form_data.password_hash:
+            newpaswd = get_password_hash(form_data.password_hash)
+        else:
+            newpaswd = this_user.first().password_hash
+
+        this_user.update({
+            User.name: form_data.name,
+            User.role: form_data.role,
+            User.phone: form_data.phone,
+            User.username: form_data.username,
+            User.password_hash: newpaswd,
+            User.disabled: form_data.disabled,
+        })
+
+        db.commit()
+        return 'Success'
+    else:
+        raise HTTPException(status_code=404, detail="User was not found!")
+
+
+def delete_user(id, usr, db):
+
+    this_user = db.query(User).filter(User.id == id)
+
+    if this_user.first():
+        this_user.delete()
+
+        db.commit()
+        return 'This item has been deleted!'
+    else:
+        raise HTTPException(status_code=404, detail="User was not found!")       
+    

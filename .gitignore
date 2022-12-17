@@ -1,0 +1,9 @@
+__pycache__/
+controllers/__pycache__/
+functions/__pycache__/
+models/__pycache__/
+routers/__pycache__/
+schemas/__pycache__/
+venv/
+my.json
+

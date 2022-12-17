@@ -1,0 +1,25 @@
+    
+from models.user import * 
+from models.queue import * 
+
+from datetime import datetime 
+from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String, DateTime, Time, Text, Boolean 
+from sqlalchemy.orm import relationship 
+from db import Base 
+ 
+now_sanavaqt = datetime.now() 
+
+
+class Diagnosis(Base):
+    __tablename__ = "diagnosis"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    illness = Column(String, default='')
+    description = Column(String, default='')
+    user_id = Column(Integer, ForeignKey('user.id'), default=0)
+    queue_id = Column(Integer, ForeignKey('queue.id'), default=0)
+    created_at = Column(DateTime, default=now_sanavaqt)
+    updated_at = Column(DateTime, default=now_sanavaqt)
+
+    user = relationship('User', backref='diagnosiss')
+    queue = relationship('Queue', backref='diagnosiss')       
+    
