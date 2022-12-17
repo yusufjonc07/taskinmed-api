@@ -2,6 +2,7 @@
 from fastapi import HTTPException
 from models.user import User
 from auth import get_password_hash
+from sqlalchemy.orm import joinedload
 
 
 def get_count_users(usr, db):
@@ -16,7 +17,10 @@ def get_all_users(page, limit, usr, db):
     else:
         offset = (page-1) * limit
 
-    return db.query(User).order_by(User.id.desc()).offset(offset).limit(limit).all()
+    return db.query(User).options(
+        joinedload('doctors').subqueryload('service'),
+        joinedload('cashers').subqueryload('cashreg'),
+    ).order_by(User.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_user(id, usr, db):

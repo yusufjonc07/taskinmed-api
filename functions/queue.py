@@ -2,23 +2,53 @@
 from fastapi import HTTPException
 from models.queue import Queue
 from sqlalchemy.orm import joinedload
-from models.doctor import User
+from models.service import Service
+from models.user import User
+from models.doctor import Doctor
+from models.patient import Patient
 from manager import *
-
+from sqlalchemy import or_
 
 def get_count_queues(usr, db):
 
     return db.query(Queue).count()
 
 
-def get_all_queues(page, limit, usr, db):
+def get_all_queues(page, limit, usr, db, step, search):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Queue).order_by(Queue.id.desc()).offset(offset).limit(limit).all()
+    qs = db.query(Queue).filter_by(step=step) \
+        .join(Queue.service, aliased=True) \
+        .join(Queue.patient, aliased=True) \
+        .join(Queue.doctor, aliased=True) \
+        .join(Doctor.user, aliased=True) \
+        .options(
+            joinedload('doctor').subqueryload('user').load_only(
+                User.name,
+                User.phone,
+            ),
+            joinedload('patient'),
+            joinedload('service')
+        )
+
+    if usr.role == 'doctor':
+        qs = qs.filter(Queue.doctor.has(user_id=usr.id))
+
+    if len(search) > 0:
+        qs = qs.filter(
+            or_(
+                Service.name.like(f"%{search}%"),
+                Patient.name.like(f"%{search}%"),
+                Patient.phone.like(f"%{search}%"),
+                User.name.like(f"%{search}%"),
+            )       
+        )
+
+    return qs.order_by(Queue.number.asc()).offset(offset).limit(limit).all()
 
 
 def read_queue(id, usr, db):

@@ -1,4 +1,4 @@
-    
+from typing import Optional  
 from fastapi import Depends, APIRouter, HTTPException, Query
 from fastapi import HTTPException
 from db import ActiveSession
@@ -13,21 +13,22 @@ from manager import *
 queue_router = APIRouter(tags=['Queue Endpoint'])
 
 
-@queue_router.get("/queues", description="This router returns list of the queues using pagination")
+@queue_router.get("/queues", description="Search servis nomi, bemor ismi va telefoni, doktor ismi bo`yicha")
 async def get_queues_list(
     page: int = 1,
     limit: int = 10,
+    step: Optional[int] = 0,
+    search: Optional[str] = '',
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_queues(page, limit, usr, db)
+        return get_all_queues(page, limit, usr, db, step, search)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
 
-
-@queue_router.post("/queue/create", description="This router is able to add new queue and return queue id")
+@queue_router.post("/queue/create", description="This router is able to add new queue and to return queue id")
 async def create_new_queue(
     p_id: int,
     form_data: NewQueue,
