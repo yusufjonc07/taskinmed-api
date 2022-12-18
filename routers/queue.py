@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from auth import get_current_active_user
 from settings import UserSchema
 from functions.queue import *
+from functions.income import *
 from models.queue import *
 from schemas.queue import *
 from manager import *
@@ -21,14 +22,11 @@ async def get_queues_list(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if not usr.role in ['any_role']:
-        return get_all_queues(page, limit, usr, db, step, search)
-    else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+    return get_all_queues(page, limit, usr, db, step, search)
 
 
 @queue_router.post("/queue/create", description="This router is able to add new queue and to return queue id")
-async def create_new_queue(
+async def create_new_queue( 
     p_id: int,
     form_data: NewQueue,
     db:Session = ActiveSession,
@@ -39,6 +37,17 @@ async def create_new_queue(
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
+
+@queue_router.post("/cashreg/confirm", description="This router is able to add new income and return income id")
+async def create_new_income(
+    queue_id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if not usr.role in ['any_role']:
+        return create_income(queue_id, usr, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")
 
 @queue_router.post("/queue/confirm")
 async def confirm_new_queue(
@@ -83,6 +92,17 @@ async def update_one_queue(
 ):
     if usr.role in ['admin', 'operator', 'reception']:
         return update_queue(id, form_data, usr, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")       
+    
+@queue_router.put("/queue/{id}/cancel", description="This router is able to cancel queue")
+async def cancel_one_queue(
+    id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['admin', 'operator', 'reception']:
+        return cancel_queue(id, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")       
     

@@ -24,18 +24,6 @@ async def get_incomes_list(
         raise HTTPException(status_code=403, detail="Access denided!")
 
 
-@income_router.post("/income/create", description="This router is able to add new income and return income id")
-async def create_new_income(
-    queue_id: int,
-    db:Session = ActiveSession,
-    usr: UserSchema = Depends(get_current_active_user)
-):
-    if not usr.role in ['any_role']:
-        return create_income(queue_id, usr, db)
-    else:
-        raise HTTPException(status_code=403, detail="Access denided!")
-
-
 @income_router.put("/income/{id}/update", description="This router is able to update income")
 async def update_one_income(
     id: int,

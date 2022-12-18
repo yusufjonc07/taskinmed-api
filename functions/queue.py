@@ -1,6 +1,6 @@
     
 from fastapi import HTTPException
-from models.queue import Queue
+from models.queue import Queue, now_sanavaqt
 from sqlalchemy.orm import joinedload
 from models.service import Service
 from models.user import User
@@ -150,7 +150,7 @@ def complete_diagnosis(id, db):
     this_queue = db.query(Queue).filter_by(id=id, step=4)
 
     if this_queue.first():
-        this_queue.update({Queue.step: 5})
+        this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt})
         db.commit()
 
         return db.query(Queue).options(
@@ -170,16 +170,18 @@ def complete_diagnosis(id, db):
     else:
         raise HTTPException(status_code=404, detail="Queue was not found!")
 
+def cancel_queue(id, usr, db):
 
-def delete_queue(id, usr, db):
-
-    this_queue = db.query(Queue).filter(Queue.id == id)
+    this_queue = db.query(Queue).filter_by(id=id).filter(Queue.step > 0)
 
     if this_queue.first():
-        this_queue.delete()
-
+        this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
         db.commit()
-        return 'This item has been deleted!'
+
+        return 'success'
+
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")       
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+
     

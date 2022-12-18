@@ -2,21 +2,35 @@
 from fastapi import HTTPException
 from models.diagnosis import Diagnosis
 from models.queue import Queue
+from models.user import User
 from functions.recipe import create_recipe
+from sqlalchemy.orm import joinedload
 
 def get_count_diagnosiss(usr, db):
 
     return db.query(Diagnosis).count()
 
 
-def get_all_diagnosiss(page, limit, usr, db):
+def get_all_diagnosiss(page, patient_id, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Diagnosis).order_by(Diagnosis.id.desc()).offset(offset).limit(limit).all()
+    dgs = db.query(Diagnosis).options(
+        joinedload('patient'),
+        joinedload('user').load_only(User.name, User.phone),
+        joinedload('recipes').subqueryload('drug'),
+    )
+
+    if patient_id > 0:
+        dgs = dgs.filter_by(patient_id=patient_id)
+
+    if usr.role == 'doctor':
+        dgs = dgs.filter_by(user_id=usr.id)
+        
+    return dgs.order_by(Diagnosis.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_diagnosis(id, usr, db):
