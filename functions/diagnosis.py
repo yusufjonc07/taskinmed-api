@@ -1,7 +1,8 @@
     
 from fastapi import HTTPException
 from models.diagnosis import Diagnosis
-
+from models.queue import Queue
+from functions.recipe import create_recipe
 
 def get_count_diagnosiss(usr, db):
 
@@ -29,18 +30,31 @@ def read_diagnosis(id, usr, db):
 
 
 def create_diagnosis(form_data, usr, db):
+    
+    upt = db.query(Queue).filter_by(id=form_data.queue_id, step=3)
+    queue = upt.first()
 
-    new_diagnosis = Diagnosis(
-        illness=form_data.illness,
-        description=form_data.description,
-        user_id=form_data.user_id,
-        queue_id=form_data.queue_id,
-    )
+    if queue:
+        
+        new_diagnosis = Diagnosis(
+            illness=form_data.illness,
+            description=form_data.description,
+            user_id=usr.id,
+            queue_id=queue.id,
+            patient_id=queue.patient_id,
+        )
 
-    db.add(new_diagnosis)
+        db.add(new_diagnosis)
+        db.flush()
 
-    db.commit()
-    return new_diagnosis.id
+        for one_recipe in form_data.recipes:
+            create_recipe(one_recipe, new_diagnosis.id, queue,  usr, db)
+
+        db.commit()
+        return 'success'
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+    
 
 
 def update_diagnosis(id, form_data, usr, db):
@@ -51,8 +65,6 @@ def update_diagnosis(id, form_data, usr, db):
         this_diagnosis.update({
             Diagnosis.illness: form_data.illness,
             Diagnosis.description: form_data.description,
-            Diagnosis.user_id: form_data.user_id,
-            Diagnosis.queue_id: form_data.queue_id,
         })
 
         db.commit()

@@ -1,6 +1,7 @@
     
 from models.user import * 
 from models.queue import * 
+from models.patient import * 
 
 from datetime import datetime 
 from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String, DateTime, Time, Text, Boolean 
@@ -17,9 +18,11 @@ class Diagnosis(Base):
     description = Column(String, default='')
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
     queue_id = Column(Integer, ForeignKey('queue.id'), default=0)
+    patient_id = Column(Integer, ForeignKey('patient.id'), default=0)
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
 
     user = relationship('User', backref='diagnosiss')
+    patient = relationship('Patient', backref='diagnosiss')
     queue = relationship('Queue', backref='diagnosiss')       
     

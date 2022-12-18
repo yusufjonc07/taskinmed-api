@@ -12,7 +12,6 @@ from manager import *
 
 queue_router = APIRouter(tags=['Queue Endpoint'])
 
-
 @queue_router.get("/queues", description="Search servis nomi, bemor ismi va telefoni, doktor ismi bo`yicha")
 async def get_queues_list(
     page: int = 1,
@@ -35,8 +34,42 @@ async def create_new_queue(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if not usr.role in ['any_role']:
+    if usr.role in ['admin', 'operator', 'reception']:
         return create_queue(form_data, p_id, usr, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")
+
+
+@queue_router.post("/queue/confirm")
+async def confirm_new_queue(
+    id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['admin', 'reception']:
+        return confirm_queue(id, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")
+
+@queue_router.post("/diagnosises/confirm")
+async def confirm_the_diagnonis(
+    queue_id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['admin', 'doctor']:
+        return confirm_diagnosis(queue_id, db)
+    else:
+        raise HTTPException(status_code=403, detail="Access denided!")
+
+@queue_router.post("/queue/complete")
+async def complete_queue(
+    queue_id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['admin', 'doctor']:
+        return complete_diagnosis(queue_id, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
@@ -48,7 +81,7 @@ async def update_one_queue(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if not usr.role in ['any_role']:
+    if usr.role in ['admin', 'operator', 'reception']:
         return update_queue(id, form_data, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")       

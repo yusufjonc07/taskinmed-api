@@ -16,8 +16,7 @@ async def get_home(db: Session = ActiveSession):
     route_bind_content = route_bind_content + f"\nfrom fastapi import APIRouter, Depends"
     route_bind_content = route_bind_content + f"\nfrom auth import get_current_active_user"
     
-    # table_names = ['patient', 'source', 'diagnosis', 'queue', 'region', 'service', 'state', 'user', 'drug']
-    table_names = ['cashreg', 'casher']
+    table_names = ['recipe']
 
     for table_name in table_names:
         route_bind_content = route_bind_content + f"\nfrom routers.{table_name} import {table_name}_router"
@@ -151,7 +150,7 @@ async def get_home(db: Session = ActiveSession):
         relates = ''
         relates_sources = f"\n"
 
-        for column in inspector.get_columns(table_name, schema='klinika'):
+        for column in inspector.get_columns(table_name, schema='admin_dbsync'):
 
             
 

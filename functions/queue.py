@@ -32,7 +32,10 @@ def get_all_queues(page, limit, usr, db, step, search):
                 User.phone,
             ),
             joinedload('patient'),
-            joinedload('service')
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
         )
 
     if usr.role == 'doctor':
@@ -95,7 +98,10 @@ def get_unpaid_queues(db):
                 User.phone,
             ),
             joinedload('patient'),
-            joinedload('service')
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
         ).filter_by(step=1).order_by(Queue.id.desc()).all()
 
 def update_queue(id, form_data, usr, db):
@@ -114,6 +120,53 @@ def update_queue(id, form_data, usr, db):
 
         db.commit()
         return 'Success'
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+def confirm_queue(id, db):
+
+    this_queue = db.query(Queue).filter_by(id=id, step=2)
+
+    if this_queue.first():
+        this_queue.update({Queue.step: 3})
+        db.commit()
+        return 'Success'
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+def confirm_diagnosis(id, db):
+
+    this_queue = db.query(Queue).filter_by(id=id, step=3)
+
+    if this_queue.first():
+        this_queue.update({Queue.step: 4})
+        db.commit()
+        return 'Success'
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+def complete_diagnosis(id, db):
+
+    this_queue = db.query(Queue).filter_by(id=id, step=4)
+
+    if this_queue.first():
+        this_queue.update({Queue.step: 5})
+        db.commit()
+
+        return db.query(Queue).options(
+            joinedload('doctor') \
+            .subqueryload('user') \
+                .load_only(
+                User.name,
+                User.phone,
+            ),
+            joinedload('patient'),
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
+        ).filter_by(id=id).first()
+
     else:
         raise HTTPException(status_code=404, detail="Queue was not found!")
 

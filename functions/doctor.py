@@ -39,15 +39,19 @@ def read_doctor(id, usr, db):
 
 def create_doctor(form_data, usr, db):
 
+    if form_data.cost < 0:
+        raise HTTPException(status_code=422, detail="Cost of doctor must be higher than 0!")
+
     new_doctor = Doctor(
         service_id=form_data.service_id,
+        cost=form_data.cost,
         room=form_data.room,
         user_id=form_data.user_id,
     )
 
     db.add(new_doctor)
-
     db.commit()
+
     return new_doctor.id
 
 
@@ -56,6 +60,7 @@ def update_doctor(id, form_data, usr, db):
     this_doctor = db.query(Doctor).filter(Doctor.id == id)
 
     if this_doctor.first():
+        
         this_doctor.update({
             Doctor.service_id: form_data.service_id,
             Doctor.room_id: form_data.room_id,

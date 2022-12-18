@@ -5,47 +5,46 @@ from db import ActiveSession
 from sqlalchemy.orm import Session
 from auth import get_current_active_user
 from settings import UserSchema
-from functions.diagnosis import *
-from models.diagnosis import *
-from schemas.diagnosis import *
+from functions.income import *
+from models.income import *
 
-diagnosis_router = APIRouter(tags=['Diagnosis Endpoint'])
+income_router = APIRouter(tags=['Income Endpoint'])
 
 
-@diagnosis_router.get("/diagnosiss", description="This router returns list of the diagnosiss using pagination")
-async def get_diagnosiss_list(
+@income_router.get("/incomes", description="This router returns list of the incomes using pagination")
+async def get_incomes_list(
     page: int = 1,
     limit: int = 10,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_diagnosiss(page, limit, usr, db)
+        return get_all_incomes(page, limit, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
 
-@diagnosis_router.post("/diagnosis/create", description="This router is able to add new diagnosis and return diagnosis id")
-async def create_new_diagnosis(
-    form_data: NewDiagnosis,
+@income_router.post("/income/create", description="This router is able to add new income and return income id")
+async def create_new_income(
+    queue_id: int,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_diagnosis(form_data, usr, db)
+        return create_income(queue_id, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
 
-@diagnosis_router.put("/diagnosis/{id}/update", description="This router is able to update diagnosis")
-async def update_one_diagnosis(
+@income_router.put("/income/{id}/update", description="This router is able to update income")
+async def update_one_income(
     id: int,
-    form_data: UpdateDiagnosis,
+    queue_id: int,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_diagnosis(id, form_data, usr, db)
+        return update_income(id, queue_id, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")       
     
