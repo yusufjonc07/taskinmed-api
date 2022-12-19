@@ -52,6 +52,7 @@ def get_all_queues(page, limit, usr, db, step, search):
             )       
         )
 
+
     data = qs.order_by(Queue.number.asc()).offset(offset).limit(limit)
 
     return {
