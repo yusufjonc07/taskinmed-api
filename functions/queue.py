@@ -8,6 +8,7 @@ from models.doctor import Doctor
 from models.patient import Patient
 from manager import *
 from sqlalchemy import or_
+import math
 
 def get_count_queues(usr, db):
 
@@ -51,7 +52,14 @@ def get_all_queues(page, limit, usr, db, step, search):
             )       
         )
 
-    return qs.order_by(Queue.number.asc()).offset(offset).limit(limit).all()
+    data = qs.order_by(Queue.number.asc()).offset(offset).limit(limit)
+
+    return {
+        "data": data.all(),
+        "count": math.ceil(data.count() / limit),
+        "page": page,
+        "limit": limit,
+    }
 
 
 def read_queue(id, usr, db):
