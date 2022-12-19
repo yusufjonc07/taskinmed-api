@@ -61,7 +61,6 @@ def get_all_queues(page, limit, usr, db, step, search):
         "limit": limit,
     }
 
-
 def read_queue(id, usr, db):
 
     this_queue = db.query(Queue).filter(Queue.id == id).first()
