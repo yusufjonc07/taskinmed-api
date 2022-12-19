@@ -14,7 +14,6 @@ def get_all_cashregs(page, limit, usr, db):
         offset = 0
     else:
         offset = (page-1) * limit
-
     return db.query(Cashreg).order_by(Cashreg.id.desc()).offset(offset).limit(limit).all()
 
 
