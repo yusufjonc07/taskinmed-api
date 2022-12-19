@@ -13,6 +13,7 @@ now_sanavaqt = datetime.now()
 
 
 class Income(Base):
+    
     __tablename__ = "income"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     value = Column(Numeric, default=0)
@@ -23,6 +24,7 @@ class Income(Base):
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default='0000-00-00 00:00:00')
     taken = Column(Boolean, default=False)
+    method = Column(String, default="naqd")
 
     patient = relationship('Patient', backref='incomes')
     queue = relationship('Queue', backref='incomes')

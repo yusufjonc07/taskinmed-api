@@ -95,6 +95,10 @@ async def get_current_active_user(current_user: UserSchema = Depends(get_current
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+@auth_router.get("/me")
+async def get_me(usr: UserSchema = Depends(get_current_active_user)):
+    return usr
+
 
 @auth_router.post("/token", description="Bu joy login qilish uchun kerak boladi")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

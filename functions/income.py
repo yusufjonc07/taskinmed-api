@@ -4,6 +4,8 @@ from models.income import Income
 from models.patient import Patient
 from models.queue import Queue
 from models.casher import Casher
+from sqlalchemy.orm import joinedload
+from models.user import User
 
 
 def get_count_incomes(usr, db):
@@ -31,9 +33,9 @@ def read_income(id, usr, db):
         raise HTTPException(status_code=404, detail="Income was not found!")
 
 
-def create_income(queue_id, usr, db):
+def create_income(form_data, usr, db):
 
-    upt = db.query(Queue).filter_by(id=queue_id, step=1)
+    upt = db.query(Queue).filter_by(id=form_data.queue_id, step=1)
     queue = upt.first()
 
     if queue:
@@ -46,6 +48,7 @@ def create_income(queue_id, usr, db):
                 value=queue.doctor.cost,
                 patient_id=queue.patient_id,
                 queue_id=queue.id,
+                method=form_data.method,
                 user_id=usr.id,
                 cashreg_id=casher.cashreg_id
             )
@@ -54,9 +57,21 @@ def create_income(queue_id, usr, db):
             db.flush()
             
             if new_income.id > 0:
-                upt.update({Queue.step: 2})
+                
+                upt.update({Queue.step: 3})
                 db.commit()
-                return new_income
+
+                return db.query(Queue) \
+                    .filter_by(id=form_data.queue_id, step=3) \
+                        .options(
+                            joinedload('incomes'),
+                            joinedload('patient'),
+                            joinedload('service'),
+                            joinedload('doctor').subqueryload('user').load_only(
+                                User.name,
+                                User.phone,
+                            ),
+                        ).first()
             else:
                 raise HTTPException(status_code=500, detail="Income was not created!")
         else:
