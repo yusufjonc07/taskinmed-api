@@ -14,12 +14,14 @@ from routers.doctor import doctor_router
 from routers.cashreg import cashreg_router
 from routers.casher import casher_router
 from routers.income import income_router
+from routers.report import report_router
 
 ActiveUser = Depends(get_current_active_user)
 routes = APIRouter(dependencies=[ActiveUser])
 
 
-routes.include_router(income_router)       
+routes.include_router(report_router)      
+routes.include_router(income_router)      
 routes.include_router(cashreg_router)       
 routes.include_router(casher_router)       
 routes.include_router(patient_router)
