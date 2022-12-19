@@ -1,13 +1,20 @@
     
-from typing import Optional
-from fastapi import UploadFile
+from typing import Optional, List
+from schemas.recipe import NewRecipe
 from pydantic import BaseModel
 
 
 class NewDiagnosis(BaseModel):
     illness: str
-    description: str
-    user_id: int
+    description: Optional[str] = ''
     queue_id: int
+    recipes: List[NewRecipe]
+
+
+class UpdateDiagnosis(BaseModel):
+    illness: str
+    description: Optional[str] = ''
+
+
        
     

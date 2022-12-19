@@ -47,7 +47,7 @@ async def create_new_user(
 @user_router.put("/user/{id}/update", description="This router is able to update user")
 async def update_one_user(
     id: int,
-    form_data: NewUser,
+    form_data: UpdateUser,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):

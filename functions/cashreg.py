@@ -5,7 +5,7 @@ from models.cashreg import Cashreg
 
 def get_count_cashregs(usr, db):
 
-    return db.query(Cashreg).filter(Cashreg.workplace_id == usr.workplace_id).count()
+    return db.query(Cashreg).count()
 
 
 def get_all_cashregs(page, limit, usr, db):
@@ -14,8 +14,7 @@ def get_all_cashregs(page, limit, usr, db):
         offset = 0
     else:
         offset = (page-1) * limit
-
-    return db.query(Cashreg).filter(Cashreg.workplace_id == usr.workplace_id).order_by(Cashreg.id.desc()).offset(offset).limit(limit).all()
+    return db.query(Cashreg).order_by(Cashreg.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_cashreg(id, usr, db):

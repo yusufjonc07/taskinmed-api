@@ -1,24 +1,57 @@
     
 from fastapi import HTTPException
-from models.queue import Queue
+from models.queue import Queue, now_sanavaqt
 from sqlalchemy.orm import joinedload
-from models.doctor import User
+from models.service import Service
+from models.user import User
+from models.doctor import Doctor
+from models.patient import Patient
 from manager import *
-
+from sqlalchemy import or_
 
 def get_count_queues(usr, db):
 
     return db.query(Queue).count()
 
 
-def get_all_queues(page, limit, usr, db):
+def get_all_queues(page, limit, usr, db, step, search):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Queue).order_by(Queue.id.desc()).offset(offset).limit(limit).all()
+    qs = db.query(Queue).filter_by(step=step) \
+        .join(Queue.service, aliased=True) \
+        .join(Queue.patient, aliased=True) \
+        .join(Queue.doctor, aliased=True) \
+        .join(Doctor.user, aliased=True) \
+        .options(
+            joinedload('doctor').subqueryload('user').load_only(
+                User.name,
+                User.phone,
+            ),
+            joinedload('patient'),
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
+        )
+
+    if usr.role == 'doctor':
+        qs = qs.filter(Queue.doctor.has(user_id=usr.id))
+
+    if len(search) > 0:
+        qs = qs.filter(
+            or_(
+                Service.name.like(f"%{search}%"),
+                Patient.name.like(f"%{search}%"),
+                Patient.phone.like(f"%{search}%"),
+                User.name.like(f"%{search}%"),
+            )       
+        )
+
+    return qs.order_by(Queue.number.asc()).offset(offset).limit(limit).all()
 
 
 def read_queue(id, usr, db):
@@ -65,7 +98,10 @@ def get_unpaid_queues(db):
                 User.phone,
             ),
             joinedload('patient'),
-            joinedload('service')
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
         ).filter_by(step=1).order_by(Queue.id.desc()).all()
 
 def update_queue(id, form_data, usr, db):
@@ -87,16 +123,65 @@ def update_queue(id, form_data, usr, db):
     else:
         raise HTTPException(status_code=404, detail="Queue was not found!")
 
+def confirm_queue(id, db):
 
-def delete_queue(id, usr, db):
-
-    this_queue = db.query(Queue).filter(Queue.id == id)
+    this_queue = db.query(Queue).filter_by(id=id, step=2)
 
     if this_queue.first():
-        this_queue.delete()
-
+        this_queue.update({Queue.step: 3})
         db.commit()
-        return 'This item has been deleted!'
+        return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")       
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+def confirm_diagnosis(id, db):
+
+    this_queue = db.query(Queue).filter_by(id=id, step=3)
+
+    if this_queue.first():
+        this_queue.update({Queue.step: 4})
+        db.commit()
+        return 'Success'
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+def complete_diagnosis(id, db):
+
+    this_queue = db.query(Queue).filter_by(id=id, step=4)
+
+    if this_queue.first():
+        this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt})
+        db.commit()
+
+        return db.query(Queue).options(
+            joinedload('doctor') \
+            .subqueryload('user') \
+                .load_only(
+                User.name,
+                User.phone,
+            ),
+            joinedload('patient'),
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
+        ).filter_by(id=id).first()
+
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+def cancel_queue(id, usr, db):
+
+    this_queue = db.query(Queue).filter_by(id=id).filter(Queue.step > 0)
+
+    if this_queue.first():
+        this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
+        db.commit()
+
+        return 'success'
+
+    else:
+        raise HTTPException(status_code=404, detail="Queue was not found!")
+
+
     

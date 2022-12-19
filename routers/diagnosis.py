@@ -16,11 +16,12 @@ diagnosis_router = APIRouter(tags=['Diagnosis Endpoint'])
 async def get_diagnosiss_list(
     page: int = 1,
     limit: int = 10,
+    patient_id: int = 0,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_diagnosiss(page, limit, usr, db)
+        return get_all_diagnosiss(page, patient_id, limit, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
@@ -40,7 +41,7 @@ async def create_new_diagnosis(
 @diagnosis_router.put("/diagnosis/{id}/update", description="This router is able to update diagnosis")
 async def update_one_diagnosis(
     id: int,
-    form_data: NewDiagnosis,
+    form_data: UpdateDiagnosis,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):

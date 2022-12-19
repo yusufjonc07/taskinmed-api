@@ -26,11 +26,13 @@ class Queue(Base):
     step = Column(Integer, default=1)
     room = Column(Integer, default=0)
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
+    cancel_user_id = Column(Integer, ForeignKey('user.id'), default=0)
     doctor_id = Column(Integer, ForeignKey('doctor.id'), default=0)
 
 
-    doctor = relationship('Doctor', backref='queues')
+    doctor = relationship('Doctor',  backref='queues')
     patient = relationship('Patient', backref='queues')
     service = relationship('Service', backref='queues')
-    user = relationship('User', backref='queues')       
+    user = relationship('User', foreign_keys=[user_id], backref='queues')       
+    cancelled_user = relationship('User', foreign_keys=[cancel_user_id], backref='cancelled_queues')       
     
