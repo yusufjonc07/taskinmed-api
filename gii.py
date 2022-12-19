@@ -17,7 +17,7 @@ async def get_home(db: Session = ActiveSession):
     route_bind_content = route_bind_content + f"\nfrom auth import get_current_active_user"
     
     # table_names = ['patient', 'source', 'diagnosis', 'queue', 'region', 'service', 'state', 'user', 'drug']
-    table_names = ['cashreg', 'casher']
+    table_names = []
 
     for table_name in table_names:
         route_bind_content = route_bind_content + f"\nfrom routers.{table_name} import {table_name}_router"
@@ -246,25 +246,25 @@ async def get_home(db: Session = ActiveSession):
         route_bind_content = route_bind_content + f"\nroutes.include_router({table_name}_router)"
 
 
-        with open(f'./models/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {model_content}       
-    ''')
+    #     with open(f'./models/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {model_content}       
+    # ''')
 
-        with open(f'./functions/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {crud_content}       
-    ''')
+    #     with open(f'./functions/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {crud_content}       
+    # ''')
 
-        with open(f'./schemas/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {schema_content}       
-    ''')
+    #     with open(f'./schemas/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {schema_content}       
+    # ''')
 
-        with open(f'./routers/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {router_content}       
-    ''')
+    #     with open(f'./routers/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {router_content}       
+    # ''')
 
 #     with open(f'./routes.py', 'w') as f:
 #         f.write(f'''\
