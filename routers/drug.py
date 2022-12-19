@@ -8,6 +8,7 @@ from settings import UserSchema
 from functions.drug import *
 from models.drug import *
 from schemas.drug import *
+import math
 
 drug_router = APIRouter(tags=['Drug Endpoint'])
 
@@ -20,7 +21,13 @@ async def get_drugs_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_drugs(page, limit, usr, db)
+        return {
+            "data": get_all_drugs(page, limit, usr, db),
+            "count": math.ceil(get_count_drugs(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
+
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

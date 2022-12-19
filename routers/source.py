@@ -9,6 +9,7 @@ from functions.source import *
 from models.source import *
 from schemas.source import *
 from typing import List
+import math
 
 source_router = APIRouter(tags=['Source Endpoint'])
 
@@ -21,7 +22,12 @@ async def get_sources_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_sources(page, limit, usr, db)
+        return {
+            "data": get_all_sources(page, limit, usr, db),
+            "count": math.ceil(get_count_sources(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

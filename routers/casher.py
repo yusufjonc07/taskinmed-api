@@ -8,6 +8,7 @@ from settings import UserSchema
 from functions.casher import *
 from models.casher import *
 from schemas.casher import *
+import math
 
 casher_router = APIRouter(tags=['Casher Endpoint'])
 
@@ -20,7 +21,13 @@ async def get_cashers_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_cashers(page, limit, usr, db)
+
+        return {
+            "data": get_all_cashers(page, limit, usr, db),
+            "count": math.ceil(get_count_cashers(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

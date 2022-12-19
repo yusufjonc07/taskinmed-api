@@ -3,9 +3,9 @@ from fastapi import HTTPException
 from models.state import State
 
 
-def get_count_states(usr, db):
+def get_count_states(region_id, usr, db):
 
-    return db.query(State).count()
+    return db.query(State).filter_by(region_id=region_id).count()
 
 
 def get_all_states(page, region_id, limit, usr, db):

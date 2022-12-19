@@ -8,6 +8,7 @@ from settings import UserSchema
 from functions.cashreg import *
 from models.cashreg import *
 from schemas.cashreg import *
+import math
 
 cashreg_router = APIRouter(tags=['Cashreg Endpoint'])
 
@@ -20,7 +21,14 @@ async def get_cashregs_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_cashregs(page, limit, usr, db)
+
+        return {
+            "data": get_all_cashregs(page, limit, usr, db),
+            "count": math.ceil(get_count_cashregs(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
+
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

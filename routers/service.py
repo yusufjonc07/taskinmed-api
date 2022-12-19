@@ -9,6 +9,7 @@ from functions.service import *
 from models.service import *
 from schemas.service import *
 from typing import List
+import math
 
 service_router = APIRouter(tags=['Service Endpoint'])
 
@@ -21,7 +22,12 @@ async def get_services_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_services(page, limit, usr, db)
+        return {
+            "data": get_all_services(page, limit, usr, db),
+            "count": math.ceil(get_count_services(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

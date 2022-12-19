@@ -8,6 +8,7 @@ from settings import UserSchema
 from functions.doctor import *
 from models.doctor import *
 from schemas.doctor import *
+import math
 
 doctor_router = APIRouter(tags=['Doctor Endpoint'])
 
@@ -20,7 +21,13 @@ async def get_doctors_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_doctors(page, limit, usr, db)
+        return {
+            "data": get_all_doctors(page, limit, usr, db),
+            "count": math.ceil(get_count_doctors(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
+
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

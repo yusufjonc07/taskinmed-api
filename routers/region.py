@@ -7,6 +7,7 @@ from settings import UserSchema
 from functions.region import *
 from models.region import *
 from schemas.region import *
+import math
 
 region_router = APIRouter(tags=['Region Endpoint'])
 
@@ -19,7 +20,12 @@ async def get_regions_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_regions(page, limit, usr, db)
+        return {
+            "data": get_all_regions(page, limit, usr, db),
+            "count": math.ceil(get_count_regions(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

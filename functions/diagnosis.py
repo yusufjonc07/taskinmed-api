@@ -6,9 +6,9 @@ from models.user import User
 from functions.recipe import create_recipe
 from sqlalchemy.orm import joinedload
 
-def get_count_diagnosiss(usr, db):
+def get_count_diagnosiss(patient_id, usr, db):
 
-    return db.query(Diagnosis).count()
+    return db.query(Diagnosis).filter(Diagnosis.patient_id==patient_id).count()
 
 
 def get_all_diagnosiss(page, patient_id, limit, usr, db):

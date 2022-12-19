@@ -7,6 +7,7 @@ from auth import get_current_active_user
 from settings import UserSchema
 from functions.income import *
 from models.income import *
+import math
 
 income_router = APIRouter(tags=['Income Endpoint'])
 
@@ -19,7 +20,12 @@ async def get_incomes_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_incomes(page, limit, usr, db)
+        return {
+            "data": get_all_incomes(page, limit, usr, db),
+            "count": math.ceil(get_count_incomes(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

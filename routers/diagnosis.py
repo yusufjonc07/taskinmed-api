@@ -8,6 +8,7 @@ from settings import UserSchema
 from functions.diagnosis import *
 from models.diagnosis import *
 from schemas.diagnosis import *
+import math
 
 diagnosis_router = APIRouter(tags=['Diagnosis Endpoint'])
 
@@ -21,6 +22,15 @@ async def get_diagnosiss_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
+
+        return {
+            "data": get_all_diagnosiss(page, patient_id, limit, usr, db),
+            "count": math.ceil(get_count_diagnosiss(patient_id, usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
+
+
         return get_all_diagnosiss(page, patient_id, limit, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")

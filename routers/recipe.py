@@ -9,6 +9,7 @@ from functions.recipe import *
 from models.recipe import *
 from schemas.recipe import *
 from typing import List
+import math
 
 recipe_router = APIRouter(tags=['Recipe Endpoint'])
 
@@ -21,6 +22,12 @@ async def get_recipes_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
+        return {
+            "data": get_all_recipes(page, limit, usr, db),
+            "count": math.ceil(get_count_recipes(usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
         return get_all_recipes(page, limit, usr, db)
     else:
         raise HTTPException(status_code=403, detail="Access denided!")

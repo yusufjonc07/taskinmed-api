@@ -9,6 +9,7 @@ from functions.state import *
 from models.state import *
 from schemas.state import *
 from typing import List
+import math
 
 state_router = APIRouter(tags=['State Endpoint'])
 
@@ -22,7 +23,12 @@ async def get_states_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_states(region_id, page, limit, usr, db)
+        return {
+            "data": get_all_states(region_id, page, limit, usr, db),
+            "count": math.ceil(get_count_states(region_id, usr, db) / limit),
+            "page": page,
+            "limit": limit,
+        }
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 
