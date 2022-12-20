@@ -6,12 +6,12 @@ from models.user import User
 
 
 
-def get_count_doctors(usr, db):
+def get_count_doctors(user_id, usr, db):
 
-    return db.query(Doctor).count()
+    return db.query(Doctor).filter_by(user_id=user_id).count()
 
 
-def get_all_doctors(page, limit, usr, db):
+def get_all_doctors(user_id, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
@@ -24,7 +24,7 @@ def get_all_doctors(page, limit, usr, db):
             User.disabled,
             User.phone,
         )
-    ).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
+    ).filter_by(user_id=user_id).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_doctor(id, usr, db):

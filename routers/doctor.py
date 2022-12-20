@@ -15,6 +15,7 @@ doctor_router = APIRouter(tags=['Doctor Endpoint'])
 
 @doctor_router.get("/doctors", description="This router returns list of the doctors using pagination")
 async def get_doctors_list(
+    user_id: int,
     page: int = 1,
     limit: int = 10,
     db:Session = ActiveSession,
@@ -22,8 +23,8 @@ async def get_doctors_list(
 ):
     if not usr.role in ['any_role']:
         return {
-            "data": get_all_doctors(page, limit, usr, db),
-            "count": math.ceil(get_count_doctors(usr, db) / limit),
+            "data": get_all_doctors(user_id, page, limit, usr, db),
+            "count": math.ceil(get_count_doctors(user_id, usr, db) / limit),
             "page": page,
             "limit": limit,
         }
