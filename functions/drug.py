@@ -1,24 +1,49 @@
     
 from fastapi import HTTPException
 from models.drug import Drug
+from trlatin import tarjima
+from sqlalchemy import or_
 
 
-def get_count_drugs(usr, db):
 
-    return db.query(Drug).count()
+def get_count_drugs(search, usr, db):
+
+    drugs = db.query(Drug)
+
+    if len(search) > 0:
+        drugs = drugs.filter(
+            or_(
+                Drug.name.like(f"%{tarjima(search, 'uz')}%"),
+                Drug.name.like(f"%{tarjima(search, 'ru')}%"),
+            )
+        )
+
+    return drugs.count()
 
 
-def get_all_drugs(page, limit, usr, db):
+def get_all_drugs(search, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Drug).order_by(Drug.id.desc()).offset(offset).limit(limit).all()
+
+    drugs = db.query(Drug)
+
+    if len(search) > 0:
+        drugs = drugs.filter(
+            or_(
+                Drug.name.like(f"%{tarjima(search, 'uz')}%"),
+                Drug.name.like(f"%{tarjima(search, 'ru')}%"),
+            )
+        )
+
+    return drugs.order_by(Drug.name.asc()).offset(offset).limit(limit).all()
 
 
 def read_drug(id, usr, db):
+
 
     this_drug = db.query(Drug).filter(Drug.id == id).first()
 

@@ -17,13 +17,14 @@ drug_router = APIRouter(tags=['Drug Endpoint'])
 async def get_drugs_list(
     page: int = 1,
     limit: int = 10,
+    search: Optional[str] = '',
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
         return {
-            "data": get_all_drugs(page, limit, usr, db),
-            "count": math.ceil(get_count_drugs(usr, db) / limit),
+            "data": get_all_drugs(search, page, limit, usr, db),
+            "count": math.ceil(get_count_drugs(search, usr, db) / limit),
             "page": page,
             "limit": limit,
         }

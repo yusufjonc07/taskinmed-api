@@ -1,9 +1,9 @@
 from fastapi.middleware.cors import CORSMiddleware
-from gii import gii_router
 from auth import auth_router
 from routes import routes
+# from gii import gii_router
+# from wsroutes import queue_ws
 from fastapi import FastAPI
-from wsroutes import queue_ws
 
 app = FastAPI(
     title= "MEDIC",
@@ -32,10 +32,10 @@ async def get():
 
 
 
-app.include_router(gii_router)
+# app.include_router(gii_router)
 app.include_router(auth_router)
 app.include_router(routes)
-app.include_router(queue_ws)
+# app.include_router(queue_ws)
 
 # if __name__ == '__main__':
 #     import uvicorn

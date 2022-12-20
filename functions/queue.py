@@ -9,6 +9,8 @@ from models.patient import Patient
 from manager import *
 from sqlalchemy import or_
 import math
+from trlatin import tarjima
+
 
 def get_count_queues(usr, db):
 
@@ -45,10 +47,14 @@ def get_all_queues(page, limit, usr, db, step, search):
     if len(search) > 0:
         qs = qs.filter(
             or_(
-                Service.name.like(f"%{search}%"),
-                Patient.name.like(f"%{search}%"),
-                Patient.phone.like(f"%{search}%"),
-                User.name.like(f"%{search}%"),
+                Service.name.like(f"%{tarjima(search, 'uz')}%"),
+                Service.name.like(f"%{tarjima(search, 'ru')}%"),
+                Patient.name.like(f"%{tarjima(search, 'uz')}%"),
+                Patient.name.like(f"%{tarjima(search, 'ru')}%"),
+                Patient.phone.like(f"%{tarjima(search, 'uz')}%"),
+                Patient.phone.like(f"%{tarjima(search, 'ru')}%"),
+                User.name.like(f"%{tarjima(search, 'uz')}%"),
+                User.name.like(f"%{tarjima(search, 'ru')}%"),
             )       
         )
 
