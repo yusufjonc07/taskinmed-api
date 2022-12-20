@@ -29,7 +29,7 @@ async def get_cashers_list(
             "page": page,
             "limit": limit,
         }
-        
+
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

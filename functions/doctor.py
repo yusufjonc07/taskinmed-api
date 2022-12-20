@@ -23,7 +23,8 @@ def get_all_doctors(user_id, page, limit, usr, db):
             User.name,
             User.disabled,
             User.phone,
-        )
+        ),
+        subqueryload('service')
     ).filter_by(user_id=user_id).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
 
 
