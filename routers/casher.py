@@ -15,6 +15,7 @@ casher_router = APIRouter(tags=['Casher Endpoint'])
 
 @casher_router.get("/cashers", description="This router returns list of the cashers using pagination")
 async def get_cashers_list(
+    user_id: int,
     page: int = 1,
     limit: int = 10,
     db:Session = ActiveSession,
@@ -23,11 +24,12 @@ async def get_cashers_list(
     if not usr.role in ['any_role']:
 
         return {
-            "data": get_all_cashers(page, limit, usr, db),
-            "count": math.ceil(get_count_cashers(usr, db) / limit),
+            "data": get_all_cashers(user_id, page, limit, usr, db),
+            "count": math.ceil(get_count_cashers(user_id, usr, db) / limit),
             "page": page,
             "limit": limit,
         }
+        
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

@@ -6,12 +6,12 @@ from models.user import User
 
 
 
-def get_count_cashers(usr, db):
+def get_count_cashers(user_id, usr, db):
 
-    return db.query(Casher).count()
+    return db.query(Casher).filter_by(user_id=user_id).count()
 
 
-def get_all_cashers(page, limit, usr, db):
+def get_all_cashers(user_id, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
@@ -26,7 +26,7 @@ def get_all_cashers(page, limit, usr, db):
             User.phone,
         ),
         
-    ).order_by(Casher.id.desc()).offset(offset).limit(limit).all()
+    ).filter_by(user_id=user_id).order_by(Casher.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_casher(id, usr, db):
