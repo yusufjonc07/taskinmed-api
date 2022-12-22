@@ -15,6 +15,8 @@ expence_router = APIRouter(tags=['Expence Endpoint'])
 
 @expence_router.get("/expences", description="This router returns list of the expences using pagination")
 async def get_expences_list(
+    from_date: Optional[str] = now_sanavaqt.strftime("%Y-%m-01"),
+    to_date: str = now_sanavaqt.strftime("%Y-%m-%d"),
     page: int = 1,
     limit: int = 10,
     search: Optional[str] = '',
@@ -23,8 +25,8 @@ async def get_expences_list(
 ):
     if not usr.role in ['any_role']:
         return {
-            "data": get_all_expences(search, page, limit, usr, db),
-            "count": math.ceil(get_count_expences(search, usr, db) / limit),
+            "data": get_all_expences(search, from_date, to_date, page, limit, usr, db),
+            "count": math.ceil(get_count_expences(search, from_date, to_date, usr, db) / limit),
             "page": page,
             "limit": limit,
         }

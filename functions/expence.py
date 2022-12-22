@@ -2,11 +2,11 @@
 from fastapi import HTTPException
 from models.expence import Expence
 from trlatin import tarjima
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 
 
-def get_count_expences(search, usr, db):
+def get_count_expences(search, from_date, to_date, usr, db):
 
     expences = db.query(Expence)
 
@@ -18,10 +18,13 @@ def get_count_expences(search, usr, db):
             )
         )
 
-    return expences.count()
+    return expences.filter(
+            func.date(Expence.created_at) >= from_date,
+            func.date(Expence.created_at) <= to_date,
+        ).count()
 
 
-def get_all_expences(search, page, limit, usr, db):
+def get_all_expences(search, from_date, to_date, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
@@ -39,7 +42,10 @@ def get_all_expences(search, page, limit, usr, db):
             )
         )
 
-    return expences.order_by(Expence.created_at.desc()).offset(offset).limit(limit).all()
+    return expences.filter(
+            func.date(Expence.created_at) >= from_date,
+            func.date(Expence.created_at) <= to_date,
+        ).order_by(Expence.created_at.desc()).offset(offset).limit(limit).all()
 
 
 def read_expence(id, usr, db):

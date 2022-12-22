@@ -5,22 +5,50 @@ from models.patient import Patient
 from models.queue import Queue
 from models.casher import Casher
 from sqlalchemy.orm import joinedload
+from sqlalchemy import or_, func
 from models.user import User
+from trlatin import tarjima
 
 
-def get_count_incomes(usr, db):
+def get_count_incomes(search, from_date, to_date, usr, db):
 
-    return db.query(Income).count()
+    incomes = db.query(Income).join(Income.patient)
+
+    if len(search) > 0:
+        incomes = incomes.filter(
+            or_(
+                Patient.name.like(f"%{tarjima(search, 'uz')}%"),
+                Patient.name.like(f"%{tarjima(search, 'ru')}%"),
+            )
+        )
+
+    return incomes.filter(
+            func.date(Income.created_at) >= from_date,
+            func.date(Income.created_at) <= to_date,
+        ).count()
 
 
-def get_all_incomes(page, limit, usr, db):
+def get_all_incomes(search, from_date, to_date, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Income).order_by(Income.id.desc()).offset(offset).limit(limit).all()
+    incomes = db.query(Income).join(Income.patient)
+
+    if len(search) > 0:
+        incomes = incomes.filter(
+            or_(
+                Patient.name.like(f"%{tarjima(search, 'uz')}%"),
+                Patient.name.like(f"%{tarjima(search, 'ru')}%"),
+            )
+        )
+
+    return incomes.filter(
+            func.date(Income.created_at) >= from_date,
+            func.date(Income.created_at) <= to_date,
+        ).options(joinedload('patient'), joinedload('queue').subqueryload('service')).order_by(Income.created_at.desc()).offset(offset).limit(limit).all()
 
 
 def read_income(id, usr, db):
