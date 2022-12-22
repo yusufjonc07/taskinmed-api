@@ -29,14 +29,7 @@ def get_all_doctors(user_id, service_id, page, limit, usr, db):
     else:
         offset = (page-1) * limit
 
-    doctors = db.query(Doctor).options(
-        subqueryload('user').load_only(
-            User.name,
-            User.disabled,
-            User.phone,
-        ),
-        subqueryload('service')
-    )
+    doctors = db.query(Doctor)
 
     if user_id > 0:
         doctors = doctors.filter_by(user_id=user_id)
@@ -44,7 +37,14 @@ def get_all_doctors(user_id, service_id, page, limit, usr, db):
     if service_id > 0:
         doctors = doctors.filter_by(service_id=service_id)
 
-    doctors = doctors.order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
+    doctors = doctors.options(
+        subqueryload('user').load_only(
+            User.name,
+            User.disabled,
+            User.phone,
+        ),
+        subqueryload('service')
+    ).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_doctor(id, usr, db):

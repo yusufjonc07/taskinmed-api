@@ -99,10 +99,7 @@ async def create_queue(form_data, p_id, usr, db):
 
     db.add(new_queue)
     db.commit()
-    queuses = get_unpaid_queues(db)
-    resp_queues = listtostring(queuses)
     
-    await manager.sendtocash(resp_queues)
     return new_queue.id
 
 def get_unpaid_queues(db):

@@ -41,7 +41,11 @@ async def create_new_patient(
     if usr.role in ['operator', 'admin', 'reception']:
         p_id = create_patient(form_data, usr, db)
         if p_id:
-            q_id = create_queue(form_data.queue, p_id, usr, db)
+
+            for nq in form_data.queue:
+                q_id = create_queue(nq, p_id, usr, db)
+
+        return 'success'
 
     else:
         raise HTTPException(status_code=403, detail="Access denided!")

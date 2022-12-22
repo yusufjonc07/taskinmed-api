@@ -1,5 +1,5 @@
     
-from typing import Optional
+from typing import List
 from fastapi import UploadFile
 from pydantic import BaseModel
 from schemas.queue import NewQueue
@@ -13,7 +13,7 @@ class NewPatient(BaseModel):
     region_id: int
     source_id: int
     phone: int
-    queue: NewQueue
+    queue: List[NewQueue]
 
 
 class UpdatePatient(BaseModel):
