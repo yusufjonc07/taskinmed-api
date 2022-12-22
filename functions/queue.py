@@ -78,29 +78,32 @@ def read_queue(id, usr, db):
         raise HTTPException(status_code=404, detail="Queue was not found!")
 
 
-async def create_queue(form_data, p_id, usr, db):
+def create_queue(form_data, p_id, usr, db):
 
-    last_queue = db.query(Queue).filter_by(doctor_id=form_data.doctor_id, date=form_data.date).order_by(Queue.number.desc()).first()
+    try:
+        last_queue = db.query(Queue).filter_by(room=form_data.room, date=form_data.date).order_by(Queue.number.desc()).first()
 
-    if last_queue:
-        number = last_queue.number + 1
-    else:
-        number = 1
+        if last_queue:
+            number = last_queue.number + 1
+        else:
+            number = 1
 
-    new_queue = Queue(
-        room=form_data.room,
-        doctor_id=form_data.doctor_id,
-        service_id=form_data.service_id,
-        number=number,
-        date=form_data.date,
-        patient_id=p_id,
-        user_id=usr.id
-    )
+        new_queue = Queue(
+            room=form_data.room,
+            doctor_id=form_data.doctor_id,
+            service_id=form_data.service_id,
+            number=number,
+            date=form_data.date,
+            patient_id=p_id,
+            user_id=usr.id
+        )
 
-    db.add(new_queue)
-    db.commit()
-    
-    return new_queue.id
+        db.add(new_queue)
+        db.commit()
+        
+        return 'success'
+    except Exception as e:
+        print(e)
 
 def get_unpaid_queues(db):
     return db.query(Queue).options(

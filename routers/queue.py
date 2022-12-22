@@ -1,5 +1,5 @@
-from typing import Optional  
-from fastapi import Depends, APIRouter, HTTPException, Query
+from typing import Optional, List  
+from fastapi import Depends, APIRouter, HTTPException
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -13,6 +13,7 @@ from schemas.income import *
 from manager import *
 
 queue_router = APIRouter(tags=['Queue Endpoint'])
+
 
 @queue_router.get("/queues", description="Search servis nomi, bemor ismi va telefoni, doktor ismi bo`yicha")
 async def get_queues_list(
@@ -29,12 +30,15 @@ async def get_queues_list(
 @queue_router.post("/queue/create", description="This router is able to add new queue and to return queue id")
 async def create_new_queue( 
     p_id: int,
-    form_data: NewQueue,
+    form_datas: List[NewQueue],
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
+
     if usr.role in ['admin', 'operator', 'reception']:
-        return create_queue(form_data, p_id, usr, db)
+        for form_data in form_datas:
+            create_queue(form_data, p_id, usr, db)
+        return 'success'
     else:
         raise HTTPException(status_code=403, detail="Access denided!")
 

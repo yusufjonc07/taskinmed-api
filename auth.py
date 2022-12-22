@@ -9,6 +9,7 @@ from db import get_db, ActiveSession
 from models.user import User
 from settings import *
 import random
+from models.queue import Queue, now_sanavaqt
 
 SECRET_KEY = "09dwkew65094faa6ca2556c818166b7a9563befffcf7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
@@ -70,6 +71,7 @@ def get_current_ws_active_user(token: str, db: Session = ActiveSession):
             return user
 
 
+
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -98,6 +100,18 @@ async def get_current_active_user(current_user: UserSchema = Depends(get_current
 @auth_router.get("/me")
 async def get_me(usr: UserSchema = Depends(get_current_active_user)):
     return usr
+
+
+
+@auth_router.get("/queue_number", tags=['Queue Endpoint'])
+async def get_queue_number(room_number:int, db:Session = ActiveSession):
+
+    currque = db.query(Queue).filter(Queue.room==room_number, Queue.step==3, Queue.date==now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
+
+    if currque:
+        return currque.number
+    else:
+        return 0
 
 
 @auth_router.post("/token", description="Bu joy login qilish uchun kerak boladi")
