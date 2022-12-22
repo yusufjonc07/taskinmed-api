@@ -47,6 +47,9 @@ def get_all_doctors(user_id, service_id, page, limit, usr, db):
     ).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
 
 
+    return doctors
+
+
 def read_doctor(id, usr, db):
 
     this_doctor = db.query(Doctor).filter(Doctor.id == id).first()
