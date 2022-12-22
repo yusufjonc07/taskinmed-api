@@ -8,7 +8,12 @@ from models.user import User
 
 def get_count_cashers(user_id, usr, db):
 
-    return db.query(Casher).filter_by(user_id=user_id).count()
+    casher = db.query(Casher)
+
+    if user_id > 0:
+        casher = casher.filter_by(user_id=user_id)
+
+    return casher.count()
 
 
 def get_all_cashers(user_id, page, limit, usr, db):
@@ -18,16 +23,20 @@ def get_all_cashers(user_id, page, limit, usr, db):
     else:
         offset = (page-1) * limit
 
-    return db.query(Casher).options(
+
+    casher = db.query(Casher).options(
         joinedload('cashreg'),
         subqueryload('user').load_only(
             User.name,
             User.disabled,
             User.phone,
         ),
-        
-    ).filter_by(user_id=user_id).order_by(Casher.id.desc()).offset(offset).limit(limit).all()
+    )
 
+    if user_id > 0:
+        casher = casher.filter_by(user_id=user_id)
+
+    return casher.order_by(Casher.id.desc()).offset(offset).limit(limit).all()
 
 def read_casher(id, usr, db):
 

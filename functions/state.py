@@ -8,7 +8,7 @@ def get_count_states(region_id, usr, db):
     return db.query(State).filter_by(region_id=region_id).count()
 
 
-def get_all_states(page, region_id, limit, usr, db):
+def get_all_states(region_id, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0

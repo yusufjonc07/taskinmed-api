@@ -6,26 +6,45 @@ from models.user import User
 
 
 
-def get_count_doctors(user_id, usr, db):
-
-    return db.query(Doctor).filter_by(user_id=user_id).count()
+def get_count_doctors(user_id, service_id, usr, db):
 
 
-def get_all_doctors(user_id, page, limit, usr, db):
+    doctor = db.query(Doctor)
+
+    if user_id > 0:
+        doctor = doctor.filter_by(user_id=user_id)
+
+    if service_id > 0:
+        doctor = doctor.filter_by(service_id=service_id)
+
+
+
+    return doctor.count()
+
+
+def get_all_doctors(user_id, service_id, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Doctor).options(
+    doctors = db.query(Doctor).options(
         subqueryload('user').load_only(
             User.name,
             User.disabled,
             User.phone,
         ),
         subqueryload('service')
-    ).filter_by(user_id=user_id).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
+    )
+
+    if user_id > 0:
+        doctors = doctors.filter_by(user_id=user_id)
+
+    if service_id > 0:
+        doctors = doctors.filter_by(service_id=service_id)
+
+    doctors = doctors.order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_doctor(id, usr, db):
@@ -64,7 +83,8 @@ def update_doctor(id, form_data, usr, db):
         
         this_doctor.update({
             Doctor.service_id: form_data.service_id,
-            Doctor.room_id: form_data.room_id,
+            Doctor.cost: form_data.cost,
+            Doctor.user_id: form_data.user_id,
             Doctor.user_id: form_data.user_id,
         })
 
