@@ -1,21 +1,52 @@
     
 from fastapi import HTTPException
 from models.patient import Patient
+from models.user import User
+from sqlalchemy.orm import subqueryload, joinedload
+from sqlalchemy import or_
 
 
-def get_count_patients(usr, db):
+def get_count_patients(search, usr, db):
 
-    return db.query(Patient).count()
+    pats = db.query(Patient)
+    
+    if len(search) > 0:
+        pats = pats.filter(
+            or_(
+                Patient.name.like(f"%{search}%"),
+                Patient.phone.like(f"%{search}%"),
+            )
+        )
+    return pats.count()
 
 
-def get_all_patients(page, limit, usr, db):
+def get_all_patients(search, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(Patient).order_by(Patient.id.desc()).offset(offset).limit(limit).all()
+
+    pats = db.query(Patient)
+    
+    if len(search) > 0:
+        pats = pats.filter(
+            or_(
+                Patient.name.like(f"%{search}%"),
+                Patient.phone.like(f"%{search}%"),
+            )
+        )
+
+    return pats.options(
+        joinedload('state'),
+        joinedload('region'),
+        joinedload('source'),
+        subqueryload('user').load_only(
+            User.name,
+            User.phone,
+        ),
+    ).order_by(Patient.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_patient(id, usr, db):

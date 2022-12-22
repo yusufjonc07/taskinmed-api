@@ -9,6 +9,7 @@ from functions.patient import *
 from functions.queue import *
 from models.patient import *
 from schemas.patient import *
+from typing import Optional
 import math
 
 patient_router = APIRouter(tags=['Patient Endpoint'])
@@ -16,6 +17,7 @@ patient_router = APIRouter(tags=['Patient Endpoint'])
 
 @patient_router.get("/patients", description="This router returns list of the patients using pagination")
 async def get_patients_list(
+    search: Optional[str] = '',
     page: int = 1,
     limit: int = 10,
     db:Session = ActiveSession,
@@ -23,8 +25,8 @@ async def get_patients_list(
 ):
     if not usr.role in ['any_role']:
         return {
-            "data": get_all_patients(page, limit, usr, db),
-            "count": math.ceil(get_count_patients(usr, db) / limit),
+            "data": get_all_patients(search, page, limit, usr, db),
+            "count": math.ceil(get_count_patients(search, usr, db) / limit),
             "page": page,
             "limit": limit,
         }

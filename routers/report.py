@@ -20,6 +20,7 @@ async def get_reports_list(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
+
     if not usr.role in ['any_role']:
         return get_report_index(from_date, to_date, usr, db)
     else:

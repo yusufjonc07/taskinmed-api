@@ -6,6 +6,7 @@ from models.service import Service
 from models.patient import Patient
 from models.user import User
 from models.income import Income
+from models.expence import Expence
 from sqlalchemy.orm import joinedload
 
 
@@ -59,19 +60,25 @@ def get_report_index(from_date, to_date, usr, db):
     ) \
     .scalar()
 
+    expence = db.query(func.sum(Expence.value)) .filter(
+        func.date(Expence.created_at) >= from_date,
+        func.date(Expence.created_at) <= to_date,
+    ) \
+    .scalar()
+
 
 
     return {
         'states': patrep,
         'services': serrep,
         'income': income,
+        'expence': expence,
     }
 
 
 def get_states_report(st_id, from_date, to_date, page, limit,  usr, db):
 
     # servises
-
     queues = db.query(Queue) \
         .join(Queue.service) \
         .join(Queue.patient) \
