@@ -35,12 +35,13 @@ async def create_new_queue(
     usr: UserSchema = Depends(get_current_active_user)
 ):
 
+
     if usr.role in ['admin', 'operator', 'reception']:
         for form_data in form_datas:
             create_queue(form_data, p_id, usr, db)
         return 'success'
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @queue_router.post("/cashreg/confirm", description="This router is able to add new income and return income id")
@@ -52,7 +53,7 @@ async def create_new_income(
     if not usr.role in ['any_role']:
         return create_income(form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 # @queue_router.post("/queue/confirm")
@@ -64,7 +65,7 @@ async def create_new_income(
 #     if usr.role in ['admin', 'reception']:
 #         return confirm_queue(id, db)
 #     else:
-#         raise HTTPException(status_code=403, detail="Access denided!")
+#         raise HTTPException(status_code=400, detail="Access denided!")
 
 @queue_router.post("/diagnosises/confirm")
 async def confirm_the_diagnonis(
@@ -75,7 +76,7 @@ async def confirm_the_diagnonis(
     if usr.role in ['admin', 'doctor']:
         return confirm_diagnosis(queue_id, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 @queue_router.post("/queue/complete")
 async def complete_queue(
@@ -86,7 +87,7 @@ async def complete_queue(
     if usr.role in ['admin', 'doctor']:
         return complete_diagnosis(queue_id, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @queue_router.put("/queue/{id}/update", description="This router is able to update queue")
@@ -99,7 +100,7 @@ async def update_one_queue(
     if usr.role in ['admin', 'operator', 'reception']:
         return update_queue(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     
 @queue_router.put("/queue/{id}/cancel", description="This router is able to cancel queue")
 async def cancel_one_queue(
@@ -110,5 +111,5 @@ async def cancel_one_queue(
     if usr.role in ['admin', 'operator', 'reception']:
         return cancel_queue(id, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

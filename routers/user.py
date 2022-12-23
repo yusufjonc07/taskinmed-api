@@ -29,7 +29,7 @@ async def get_users_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @user_router.post("/user/create", description="This router is able to add new user and return user id")
@@ -41,7 +41,7 @@ async def create_new_user(
     if not usr.role in ['any_role']:
         return create_user(form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @user_router.put("/user/{id}/update", description="This router is able to update user")
@@ -54,5 +54,5 @@ async def update_one_user(
     if not usr.role in ['any_role']:
         return update_user(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

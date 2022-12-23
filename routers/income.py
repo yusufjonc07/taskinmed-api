@@ -31,7 +31,7 @@ async def get_incomes_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @income_router.put("/income/{id}/update", description="This router is able to update income")
@@ -44,5 +44,5 @@ async def update_one_income(
     if not usr.role in ['any_role']:
         return update_income(id, queue_id, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

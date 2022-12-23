@@ -24,7 +24,7 @@ async def get_reports_list(
     if not usr.role in ['any_role']:
         return get_report_index(from_date, to_date, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @report_router.get("/state_reports", description="This router returns list of the reports using pagination")
@@ -51,7 +51,7 @@ async def get_satet_reports(
         }
 
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @report_router.get("/service_reports", description="This router returns list of the reports using pagination")
@@ -78,4 +78,4 @@ async def get_serv_reports(
         }
 
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")

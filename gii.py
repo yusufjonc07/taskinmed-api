@@ -69,7 +69,7 @@ async def get_home(db: Session = ActiveSession):
         read_of_crud = read_of_crud + f"\n\n    if this_{table_name}:"
         read_of_crud = read_of_crud + f"\n        return this_{table_name}"
         read_of_crud = read_of_crud + f"\n    else:"
-        read_of_crud = read_of_crud + f"\n        raise HTTPException(status_code=404, detail=\"{model_class_name} was not found!\")"
+        read_of_crud = read_of_crud + f"\n        raise HTTPException(status_code=400, detail=\"{model_class_name} was not found!\")"
         
         get_all_data = f"\n\n\ndef get_all_{table_name}s(page, limit, usr, db):"
         get_all_data = get_all_data + f"\n\n    if page == 1 or page < 1:"
@@ -89,7 +89,7 @@ async def get_home(db: Session = ActiveSession):
         delete_of_crud = delete_of_crud + f"\n\n        db.commit()"
         delete_of_crud = delete_of_crud + f"\n        return 'This item has been deleted!'"
         delete_of_crud = delete_of_crud + f"\n    else:"
-        delete_of_crud = delete_of_crud + f"\n        raise HTTPException(status_code=404, detail=\"{model_class_name} was not found!\")"
+        delete_of_crud = delete_of_crud + f"\n        raise HTTPException(status_code=400, detail=\"{model_class_name} was not found!\")"
        
 
         update_of_crud = f"\n\n\ndef update_{table_name}(id, form_data, usr, db):"
@@ -121,7 +121,7 @@ async def get_home(db: Session = ActiveSession):
         get_of_router = get_of_router + "\n    if not usr.role in ['any_role']:"
         get_of_router = get_of_router + f"\n        return get_all_{table_name}s(page, limit, usr, db)"
         get_of_router = get_of_router + "\n    else:"
-        get_of_router = get_of_router + '\n        raise HTTPException(status_code=403, detail="Access denided!")'
+        get_of_router = get_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
         
         create_of_router = f'\n\n\n@{table_name}_router.post("/{table_name}/create", description="This router is able to add new {table_name} and return {table_name} id")'
         create_of_router = create_of_router + f"\nasync def create_new_{table_name}("
@@ -131,7 +131,7 @@ async def get_home(db: Session = ActiveSession):
         create_of_router = create_of_router + "\n    if not usr.role in ['any_role']:"
         create_of_router = create_of_router + f"\n        return create_{table_name}(form_data, usr, db)"
         create_of_router = create_of_router + "\n    else:"
-        create_of_router = create_of_router + '\n        raise HTTPException(status_code=403, detail="Access denided!")'
+        create_of_router = create_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
 
 
         update_of_router = f'\n\n\n@{table_name}_router.put("/{table_name}/'+'{id}'+f'/update", description="This router is able to update {table_name}")'
@@ -143,7 +143,7 @@ async def get_home(db: Session = ActiveSession):
         update_of_router = update_of_router + "\n    if not usr.role in ['any_role']:"
         update_of_router = update_of_router + f"\n        return update_{table_name}(id, form_data, usr, db)"
         update_of_router = update_of_router + "\n    else:"
-        update_of_router = update_of_router + '\n        raise HTTPException(status_code=403, detail="Access denided!")'
+        update_of_router = update_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
         # ./ Beginning of ROUTER functions generation part
 
       
@@ -229,7 +229,7 @@ async def get_home(db: Session = ActiveSession):
         update_of_crud = update_of_crud + f"\n\n        db.commit()"
         update_of_crud = update_of_crud + f"\n        return 'Success'"
         update_of_crud = update_of_crud + f"\n    else:"
-        update_of_crud = update_of_crud + f"\n        raise HTTPException(status_code=404, detail=\"{model_class_name} was not found!\")"
+        update_of_crud = update_of_crud + f"\n        raise HTTPException(status_code=400, detail=\"{model_class_name} was not found!\")"
 
         crud_content = crud_content + get_count_of_data
         crud_content = crud_content + get_all_data

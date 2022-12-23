@@ -33,7 +33,7 @@ async def get_diagnosiss_list(
 
         return get_all_diagnosiss(page, patient_id, limit, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @diagnosis_router.post("/diagnosis/create", description="This router is able to add new diagnosis and return diagnosis id")
@@ -45,7 +45,7 @@ async def create_new_diagnosis(
     if not usr.role in ['any_role']:
         return create_diagnosis(form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @diagnosis_router.put("/diagnosis/{id}/update", description="This router is able to update diagnosis")
@@ -58,5 +58,5 @@ async def update_one_diagnosis(
     if not usr.role in ['any_role']:
         return update_diagnosis(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

@@ -31,7 +31,7 @@ async def get_patients_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @patient_router.post("/patient/create", description="This router is able to add new patient as well as his queue")
@@ -50,7 +50,7 @@ async def create_new_patient(
         return 'success'
 
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @patient_router.put("/patient/{id}/update", description="This router is able to update patient")
@@ -64,5 +64,5 @@ async def update_one_patient(
     if not usr.role in ['any_role']:
         return update_patient(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

@@ -30,7 +30,7 @@ async def get_drugs_list(
         }
 
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @drug_router.post("/drug/create", description="This router is able to add new drug and return drug id")
@@ -42,7 +42,7 @@ async def create_new_drug(
     if not usr.role in ['any_role']:
         return create_drug(form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @drug_router.put("/drug/{id}/update", description="This router is able to update drug")
@@ -55,5 +55,5 @@ async def update_one_drug(
     if not usr.role in ['any_role']:
         return update_drug(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

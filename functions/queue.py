@@ -75,7 +75,7 @@ def read_queue(id, usr, db):
     if this_queue:
         return this_queue
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 
 def create_queue(form_data, p_id, usr, db):
@@ -135,7 +135,7 @@ def update_queue(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 def confirm_queue(id, db):
 
@@ -146,7 +146,7 @@ def confirm_queue(id, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 def confirm_diagnosis(id, db):
 
@@ -157,7 +157,7 @@ def confirm_diagnosis(id, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 def complete_diagnosis(id, db):
 
@@ -182,7 +182,7 @@ def complete_diagnosis(id, db):
         ).filter_by(id=id).first()
 
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 def cancel_queue(id, usr, db):
 
@@ -195,7 +195,7 @@ def cancel_queue(id, usr, db):
         return 'success'
 
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 
     

@@ -58,7 +58,7 @@ def read_income(id, usr, db):
     if this_income:
         return this_income
     else:
-        raise HTTPException(status_code=404, detail="Income was not found!")
+        raise HTTPException(status_code=400, detail="Income was not found!")
 
 
 def create_income(form_data, usr, db):
@@ -103,9 +103,9 @@ def create_income(form_data, usr, db):
             else:
                 raise HTTPException(status_code=500, detail="Income was not created!")
         else:
-            raise HTTPException(status_code=404, detail="Casher was not found!")
+            raise HTTPException(status_code=400, detail="Casher was not found!")
     else:
-        raise HTTPException(status_code=404, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Queue was not found!")
 
 
 
@@ -135,7 +135,7 @@ def update_income(id, queue_id, usr, db):
                 db.commit()
                 return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Income was not found!")
+        raise HTTPException(status_code=400, detail="Income was not found!")
 
 
 def delete_income(id, usr, db):
@@ -148,5 +148,5 @@ def delete_income(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=404, detail="Income was not found!")       
+        raise HTTPException(status_code=400, detail="Income was not found!")       
     

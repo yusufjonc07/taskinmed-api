@@ -25,7 +25,7 @@ def read_source(id, usr, db):
     if this_source:
         return this_source
     else:
-        raise HTTPException(status_code=404, detail="Source was not found!")
+        raise HTTPException(status_code=400, detail="Source was not found!")
 
 
 def create_source(form_data, usr, db):
@@ -52,7 +52,7 @@ def update_source(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Source was not found!")
+        raise HTTPException(status_code=400, detail="Source was not found!")
 
 
 def delete_source(id, usr, db):
@@ -65,5 +65,5 @@ def delete_source(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=404, detail="Source was not found!")       
+        raise HTTPException(status_code=400, detail="Source was not found!")       
     

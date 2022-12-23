@@ -31,7 +31,7 @@ async def get_doctors_list(
         }
 
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @doctor_router.post("/doctor/create", description="This router is able to add new doctor and return doctor id")
@@ -43,7 +43,7 @@ async def create_new_doctor(
     if not usr.role in ['any_role']:
         return create_doctor(form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @doctor_router.put("/doctor/{id}/update", description="This router is able to update doctor")
@@ -56,5 +56,5 @@ async def update_one_doctor(
     if not usr.role in ['any_role']:
         return update_doctor(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

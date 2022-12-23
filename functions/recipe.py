@@ -25,7 +25,7 @@ def read_recipe(id, usr, db):
     if this_recipe:
         return this_recipe
     else:
-        raise HTTPException(status_code=404, detail="Recipe was not found!")
+        raise HTTPException(status_code=400, detail="Recipe was not found!")
 
 
 def create_recipe(form_data, dg_id, queue, usr, db):
@@ -72,7 +72,7 @@ def update_recipe(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Recipe was not found!")
+        raise HTTPException(status_code=400, detail="Recipe was not found!")
 
 
 def delete_recipe(id, usr, db):
@@ -85,5 +85,5 @@ def delete_recipe(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=404, detail="Recipe was not found!")       
+        raise HTTPException(status_code=400, detail="Recipe was not found!")       
     

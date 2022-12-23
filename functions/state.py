@@ -25,7 +25,7 @@ def read_state(id, usr, db):
     if this_state:
         return this_state
     else:
-        raise HTTPException(status_code=404, detail="State was not found!")
+        raise HTTPException(status_code=400, detail="State was not found!")
 
 
 def create_state(form_data, usr, db):
@@ -54,7 +54,7 @@ def update_state(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="State was not found!")
+        raise HTTPException(status_code=400, detail="State was not found!")
 
 
 def delete_state(id, usr, db):
@@ -67,5 +67,5 @@ def delete_state(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=404, detail="State was not found!")       
+        raise HTTPException(status_code=400, detail="State was not found!")       
     

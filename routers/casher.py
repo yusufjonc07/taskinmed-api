@@ -31,7 +31,7 @@ async def get_cashers_list(
         }
 
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 
@@ -44,7 +44,7 @@ async def create_new_casher(
     if not usr.role in ['any_role']:
         return create_casher(form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @casher_router.put("/casher/{id}/update", description="This router is able to update casher")
@@ -57,5 +57,5 @@ async def update_one_casher(
     if not usr.role in ['any_role']:
         return update_casher(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

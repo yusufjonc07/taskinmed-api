@@ -30,7 +30,7 @@ async def get_recipes_list(
         }
         return get_all_recipes(page, limit, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @recipe_router.post("/recipe/create", description="This router is able to add new recipe and return recipe id")
@@ -51,9 +51,9 @@ async def create_new_recipe(
                     recipe = create_recipe(form_data, diagnosis.id, diagnosis.queue, usr, db)
                 db.commit()    
 
-        raise HTTPException(status_code=404, detail="Diagnosis not found!")
+        raise HTTPException(status_code=400, detail="Diagnosis not found!")
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 
 @recipe_router.put("/recipe/{id}/update", description="This router is able to update recipe")
@@ -66,5 +66,5 @@ async def update_one_recipe(
     if not usr.role in ['any_role']:
         return update_recipe(id, form_data, usr, db)
     else:
-        raise HTTPException(status_code=403, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")       
     

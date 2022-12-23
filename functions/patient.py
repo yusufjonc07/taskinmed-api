@@ -56,7 +56,7 @@ def read_patient(id, usr, db):
     if this_patient:
         return this_patient
     else:
-        raise HTTPException(status_code=404, detail="Patient was not found!")
+        raise HTTPException(status_code=400, detail="Patient was not found!")
 
 
 def create_patient(form_data, usr, db):
@@ -103,7 +103,7 @@ def update_patient(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Patient was not found!")
+        raise HTTPException(status_code=400, detail="Patient was not found!")
 
 
 def delete_patient(id, usr, db):
@@ -116,5 +116,5 @@ def delete_patient(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=404, detail="Patient was not found!")       
+        raise HTTPException(status_code=400, detail="Patient was not found!")       
     

@@ -26,7 +26,7 @@ def read_region(id, usr, db):
     if this_region:
         return this_region
     else:
-        raise HTTPException(status_code=404, detail="Region was not found!")
+        raise HTTPException(status_code=400, detail="Region was not found!")
 
 
 def create_region(form_data, usr, db):
@@ -53,7 +53,7 @@ def update_region(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=404, detail="Region was not found!")
+        raise HTTPException(status_code=400, detail="Region was not found!")
 
 
 def delete_region(id, usr, db):
@@ -66,5 +66,5 @@ def delete_region(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=404, detail="Region was not found!")       
+        raise HTTPException(status_code=400, detail="Region was not found!")       
     
