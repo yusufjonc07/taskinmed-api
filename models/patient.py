@@ -17,6 +17,9 @@ class Patient(Base):
     __tablename__ = "patient"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, default='')
+    surename = Column(String, default='')
+    fathername = Column(String, default='')
+    gender = Column(String, default='erkak')
     age = Column(Integer, default=0)
     address = Column(String, default='')
     state_id = Column(Integer, ForeignKey('state.id'), default=0)

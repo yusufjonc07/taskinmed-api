@@ -63,6 +63,9 @@ def create_patient(form_data, usr, db):
 
     new_patient = Patient(
         name=form_data.name,
+        surename=form_data.surename,
+        fathername=form_data.fathername,
+        gender=form_data.gender,
         age=form_data.age,
         address=form_data.address,
         state_id=form_data.state_id,
@@ -85,6 +88,9 @@ def update_patient(id, form_data, usr, db):
     if this_patient.first():
         this_patient.update({
             Patient.name: form_data.name,
+            Patient.surename: form_data.surename,
+            Patient.fathername: form_data.fathername,
+            Patient.gender: form_data.gender,
             Patient.age: form_data.age,
             Patient.address: form_data.address,
             Patient.state_id: form_data.state_id,
