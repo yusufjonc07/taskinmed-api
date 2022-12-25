@@ -67,4 +67,16 @@ async def update_one_recipe(
         return update_recipe(id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
+
+
+@recipe_router.delete("/recipe/{id}/delete", description="This router is able to delete recipe")
+async def delete_one_recipe(
+    id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if not usr.role in ['any_role']:
+        return delete_one_recipe(id, db, usr)
+    else:
+        raise HTTPException(status_code=400, detail="Access denided!")       
     
