@@ -76,7 +76,7 @@ async def delete_one_recipe(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return delete_one_recipe(id, db, usr)
+        return delete_recipe(id, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

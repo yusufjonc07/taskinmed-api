@@ -43,6 +43,7 @@ def create_recipe(form_data, dg_id, queue, usr, db):
         patient_id=queue.patient_id,
         user_id=usr.id,
     )
+    
 
     db.add(new_recipe)
 
