@@ -26,6 +26,14 @@ async def get_queues_list(
 ):
     return get_all_queues(page, limit, usr, db, step, search)
 
+@queue_router.get("/get_one_queue")
+async def get_queues_unit(
+    page: int = 1,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    return read_queue(page, usr, db)
+
 
 @queue_router.post("/queue/create", description="This router is able to add new queue and to return queue id")
 async def create_new_queue( 

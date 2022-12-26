@@ -69,7 +69,7 @@ async def update_one_recipe(
         raise HTTPException(status_code=400, detail="Access denided!")       
 
 
-@recipe_router.delete("/recipe/{id}/delete", description="This router is able to delete recipe")
+@recipe_router.delete("/recipe_delete/{id}", description="This router is able to delete recipe")
 async def delete_one_recipe(
     id: int,
     db:Session = ActiveSession,

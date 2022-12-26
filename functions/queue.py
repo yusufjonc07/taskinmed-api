@@ -70,7 +70,22 @@ def get_all_queues(page, limit, usr, db, step, search):
 
 def read_queue(id, usr, db):
 
-    this_queue = db.query(Queue).filter(Queue.id == id).first()
+    this_queue = db.query(Queue) \
+        .join(Queue.service, aliased=True) \
+        .join(Queue.patient, aliased=True) \
+        .join(Queue.doctor, aliased=True) \
+        .join(Doctor.user, aliased=True) \
+        .options(
+            joinedload('doctor').subqueryload('user').load_only(
+                User.name,
+                User.phone,
+            ),
+            joinedload('patient'),
+            joinedload('service'),
+            joinedload('diagnosiss') \
+            .subqueryload('recipes') \
+            .subqueryload('drug'),
+        ).filter(Queue.id == id).first()
 
     if this_queue:
         return this_queue
