@@ -49,7 +49,9 @@ async def create_new_recipe(
 
                 for form_data in form_datas:
                     recipe = create_recipe(form_data, diagnosis.id, diagnosis.queue, usr, db)
-                db.commit()    
+                db.commit()
+
+                return "success"    
 
         raise HTTPException(status_code=400, detail="Diagnosis not found!")
     else:
