@@ -26,6 +26,8 @@ async def get_queues_list(
 ):
     return get_all_queues(page, limit, usr, db, step, search)
 
+
+
 @queue_router.get("/get_one_queue")
 async def get_queues_unit(
     id: int = 1,
@@ -60,6 +62,35 @@ async def create_new_income(
 ):
     if not usr.role in ['any_role']:
         return create_income(form_data, usr, db)
+    else:
+        raise HTTPException(status_code=400, detail="Access denided!")
+
+
+@queue_router.post("/queue_toggle_skipped", description="This router is able to add new income and return income id")
+async def toggle_skipped_func(
+    id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if not usr.role in ['any_role']:
+        que = db.query(Queue).filter_by(id=id)
+        queue = que.first()
+
+        if queue:
+
+            if queue.step == 2:
+                await manager.queue({
+                    "room": queue.room,
+                    "number": queue.number,
+                    "patient": queue.patient.surename + " " + queue.patient.name,
+                    "service": queue.service.name
+                })
+                que.update({Queue.step: 3})
+                return "success"
+            elif queue.step == 3:
+                que.update({Queue.step: 2})
+                return "success"
+
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
