@@ -202,7 +202,7 @@ def complete_diagnosis_finish(id, db):
                 User.name,
                 User.phone,
             ),
-            joinedload('patient'),
+            joinedload('patient').subqueryload("*"),
             joinedload('service'),
             joinedload('diagnosiss') \
             .subqueryload('recipes') \
