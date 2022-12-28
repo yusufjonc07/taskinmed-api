@@ -118,13 +118,13 @@ async def confirm_the_diagnonis(
         raise HTTPException(status_code=400, detail="Access denided!")
 
 @queue_router.post("/queue/complete")
-async def complete_queue(
+async def complete_queue_finish(
     queue_id: int,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'doctor']:
-        return complete_diagnosis(queue_id, db)
+        return complete_diagnosis_finish(queue_id, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 

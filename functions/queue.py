@@ -187,7 +187,7 @@ async def confirm_diagnosis(id, db):
 
 
 
-def complete_diagnosis(id, db):
+def complete_diagnosis_finish(id, db):
 
     this_queue = db.query(Queue).filter_by(id=id, step=4)
 
