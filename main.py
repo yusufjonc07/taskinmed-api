@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth_router
-# from eski.routes import routes
+from eski.routes import routes
 from gii import gii_router
 from wsroutes import queue_ws
 from fastapi import FastAPI
@@ -36,7 +36,7 @@ async def get():
 app.include_router(gii_router)
 app.include_router(auth_router)
 app.include_router(queue_ws)
-# app.include_router(routes)
+app.include_router(routes)
 
 # if __name__ == '__main__':
 #     import uvicorn

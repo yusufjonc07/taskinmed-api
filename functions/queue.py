@@ -174,12 +174,13 @@ async def confirm_diagnosis(id, db):
 
         next_que = db.query(Queue).filter_by(room=que.room, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
 
-        await manager.queue({
-            "room": next_que.room,
-            "number": next_que.number,
-            "patient": next_que.patient.surename + " " + next_que.patient.name,
-            "service": next_que.service.name
-        })
+        if next_que:
+            await manager.queue({
+                "room": next_que.room,
+                "number": next_que.number,
+                "patient": next_que.patient.surename + " " + next_que.patient.name,
+                "service": next_que.service.name
+            })
 
         return 'Success'
     else:

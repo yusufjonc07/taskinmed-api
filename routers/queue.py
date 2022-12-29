@@ -77,14 +77,15 @@ async def toggle_skipped_func(
         queue = que.first()
 
         if queue:
-
             if queue.step == 2:
+
                 await manager.queue({
                     "room": queue.room,
                     "number": queue.number,
                     "patient": queue.patient.surename + " " + queue.patient.name,
                     "service": queue.service.name
                 })
+
                 que.update({Queue.step: 3})
                 return "success"
             elif queue.step == 3:
