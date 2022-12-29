@@ -35,8 +35,8 @@ async def get():
 
 app.include_router(gii_router)
 app.include_router(auth_router)
+app.include_router(queue_ws)
 # app.include_router(routes)
-# app.include_router(queue_ws)
 
 # if __name__ == '__main__':
 #     import uvicorn
