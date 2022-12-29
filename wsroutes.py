@@ -16,14 +16,14 @@ queue_ws = APIRouter()
 @queue_ws.websocket("/ws_navbat")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
-    await manager.send_personal_message(f"none", websocket)
+    await manager.send_personal_message(f"Connected!", websocket)
     try:
-        
         while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(data, websocket)
+            await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+        await manager.broadcast(f"closed")
+   
 
 
 
