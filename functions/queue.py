@@ -163,7 +163,7 @@ def confirm_queue(id, db):
     else:
         raise HTTPException(status_code=400, detail="Queue was not found!")
 
-async def confirm_diagnosis(id, db):
+def confirm_diagnosis(id, db):
 
     this_queue = db.query(Queue).filter_by(id=id, step=3)
     que = this_queue.first()
@@ -175,14 +175,10 @@ async def confirm_diagnosis(id, db):
         next_que = db.query(Queue).filter_by(room=que.room, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
 
         if next_que:
-            await manager.queue({
-                "room": next_que.room,
-                "number": next_que.number,
-                "patient": next_que.patient.surename + " " + next_que.patient.name,
-                "service": next_que.service.name
-            })
+            return next_que 
+            
 
-        return 'Success'
+        
     else:
         raise HTTPException(status_code=400, detail="Queue was not found!")
 

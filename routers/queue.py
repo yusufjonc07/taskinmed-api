@@ -114,7 +114,16 @@ async def confirm_the_diagnonis(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'doctor']:
-        return confirm_diagnosis(queue_id, db)
+        next_que =  confirm_diagnosis(queue_id, db)
+
+        if next_que:
+            await manager.queue({
+                "room": next_que.room,
+                "number": next_que.number,
+                "patient": next_que.patient.surename + " " + next_que.patient.name,
+                "service": next_que.service.name
+            })
+        return 'success'
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
