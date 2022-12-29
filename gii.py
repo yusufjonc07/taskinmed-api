@@ -16,7 +16,7 @@ async def get_home(db: Session = ActiveSession):
     route_bind_content = route_bind_content + f"\nfrom fastapi import APIRouter, Depends"
     route_bind_content = route_bind_content + f"\nfrom auth import get_current_active_user"
     
-    table_names = []
+    table_names = ['car', 'carfac', 'direction', 'driver_direction', 'driver_ds', 'facility', 'order', 'order_seat', 'region', 'seat', 'sms', 'state', 'trip', 'trip_seat', 'user']
 
     for table_name in table_names:
         route_bind_content = route_bind_content + f"\nfrom routers.{table_name} import {table_name}_router"

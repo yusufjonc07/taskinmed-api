@@ -16,14 +16,14 @@ queue_ws = APIRouter()
 @queue_ws.websocket("/ws_navbat")
 async def websocket_endpoint(websocket: WebSocket, client_id: int):
     await manager.connect(websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+    # try:
+    #     while True:
+    #         data = await websocket.receive_text()
+    #         await manager.send_personal_message(f"You wrote: {data}", websocket)
+    #         await manager.broadcast(f"Client #{client_id} says: {data}")
+    # except WebSocketDisconnect:
+    #     manager.disconnect(websocket)
+    #     await manager.broadcast(f"Client #{client_id} left the chat")
 
 
 @queue_ws.get("/queues/waiting")
@@ -31,6 +31,7 @@ async def get_queuegroup_list(db:Session = ActiveSession):
 
     return db.query(
         func.min(Queue.number).label("num"), Queue.room
+        
     ).filter_by(
         step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
     ).group_by(Queue.room).order_by(Queue.number.asc()).all()
