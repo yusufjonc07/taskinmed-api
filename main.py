@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from auth import auth_router
-from eski.routes import routes
+from routes import routes
 from gii import gii_router
 from wsroutes import queue_ws
 from fastapi import FastAPI
