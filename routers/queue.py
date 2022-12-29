@@ -96,16 +96,30 @@ async def toggle_skipped_func(
         raise HTTPException(status_code=400, detail="Access denided!")
 
 
-# @queue_router.post("/queue/confirm")
-# async def confirm_new_queue(
-#     id: int,
-#     db:Session = ActiveSession,
-#     usr: UserSchema = Depends(get_current_active_user)
-# ):
-#     if usr.role in ['admin', 'reception']:
-#         return confirm_queue(id, db)
-#     else:
-#         raise HTTPException(status_code=400, detail="Access denided!")
+@queue_router.get("/queue/call")
+async def call_patient_queue(
+    room_id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['doctor']:
+
+        next_que = db.query(Queue).filter_by(room=room_id, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
+
+        if next_que:
+            await manager.queue({
+                "room": next_que.room,
+                "number": next_que.number,
+                "patient": next_que.patient.surename + " " + next_que.patient.name,
+                "service": next_que.service.name
+            })
+
+            return next_que.number
+
+        return 0
+
+    else:
+        raise HTTPException(status_code=400, detail="Access denided!")
 
 @queue_router.post("/diagnosises/confirm")
 async def confirm_the_diagnonis(
