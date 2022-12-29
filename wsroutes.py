@@ -17,13 +17,13 @@ queue_ws = APIRouter()
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
-        await manager.send_personal_message(f"Connected!", websocket)
-    #     while True:
-    #         data = await websocket.receive_text()
-    #         
-    #         await manager.broadcast(f"Client #{client_id} says: {data}")
+        
+        while True:
+            data = await websocket.receive_text()
+            await manager.send_personal_message(f"none", websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
 
 
 @queue_ws.get("/queues/waiting")
