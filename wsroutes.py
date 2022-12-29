@@ -9,6 +9,8 @@ from sqlalchemy.orm import joinedload
 from functions.queue import get_unpaid_queues
 from sqlalchemy import func
 
+# 1
+
 queue_ws = APIRouter()
 
 @queue_ws.websocket("/ws_navbat")
