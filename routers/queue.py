@@ -79,17 +79,40 @@ async def toggle_skipped_func(
         if queue:
             if queue.step == 2:
 
+                que.update({Queue.step: 3})
+                db.commit()
+
+                if len(str(queue.room)) == 1:
+                    room_path = f"Ovoz 00{queue.room}.m4a"
+                elif len(str(queue.room)) == 2:
+                    room_path = f"Ovoz 0{queue.room}.m4a"
+                else:
+                    room_path = "none"
+
+                if len(str(queue.number)) == 1:
+                    pat_path = f"Ovoz 00{queue.number}.m4a"
+                elif len(str(queue.number)) == 2:
+                    pat_path = f"Ovoz 0{queue.number}.m4a"
+                else:
+                    pat_path = "none"
+
                 await manager.queue({
                     "room": queue.room,
                     "number": queue.number,
                     "patient": queue.patient.surename + " " + queue.patient.name,
-                    "service": queue.service.name
+                    "service": queue.service.name,
+                    "track1": pat_path,
+                    "track2": "queue.m4a",
+                    "track3": room_path,
+                    "track4": "enter_room.m4a"
                 })
 
-                que.update({Queue.step: 3})
+
+                
                 return "success"
             elif queue.step == 3:
                 que.update({Queue.step: 2})
+                db.commit()
                 return "success"
 
     else:
@@ -98,23 +121,52 @@ async def toggle_skipped_func(
 
 @queue_router.get("/queue/call")
 async def call_patient_queue(
-    room_id: int,
+    id: int,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['doctor']:
 
-        next_que = db.query(Queue).filter_by(room=room_id, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
+        next_que = db.query(Queue).filter_by(id=id, step=3)
 
-        if next_que:
-            await manager.queue({
-                "room": next_que.room,
-                "number": next_que.number,
-                "patient": next_que.patient.surename + " " + next_que.patient.name,
-                "service": next_que.service.name
-            })
+        next_queue = next_que.first()
 
-            return next_que.number
+        if next_queue:
+
+            if next_queue.in_room == False:
+
+                next_que.update({Queue.in_room: True})
+                db.commit()
+
+                if len(str(next_queue.room)) == 1:
+                    room_path = f"Ovoz 00{next_queue.room}.m4a"
+                elif len(str(next_queue.room)) == 2:
+                    room_path = f"Ovoz 0{next_queue.room}.m4a"
+                else:
+                    room_path = "none"
+
+                if len(str(next_queue.number)) == 1:
+                    pat_path = f"Ovoz 00{next_queue.number}.m4a"
+                elif len(str(next_queue.number)) == 2:
+                    pat_path = f"Ovoz 0{next_queue.number}.m4a"
+                else:
+                    pat_path = "none"
+
+                await manager.queue({
+                    "room": next_queue.room,
+                    "number": next_queue.number,
+                    "patient": next_queue.patient.surename + " " + next_queue.patient.name,
+                    "service": next_queue.service.name,
+                    "track1": pat_path,
+                    "track2": "queue.m4a",
+                    "track3": room_path,
+                    "track4": "enter_room.m4a"
+                })
+            else:
+                next_que.update({Queue.in_room: False})
+                db.commit()
+
+            return 'success'
 
         return 0
 
@@ -128,18 +180,19 @@ async def confirm_the_diagnonis(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'doctor']:
-        next_que =  confirm_diagnosis(queue_id, db)
-
-        if next_que:
-            await manager.queue({
-                "room": next_que.room,
-                "number": next_que.number,
-                "patient": next_que.patient.surename + " " + next_que.patient.name,
-                "service": next_que.service.name
-            })
+        confirm_diagnosis(queue_id, db)
+        # if next_que:
+        #     await manager.queue({
+        #         "room": next_que.room,
+        #         "number": next_que.number,
+        #         "patient": next_que.patient.surename + " " + next_que.patient.name,
+        #         "service": next_que.service.name
+        #     })
         return 'success'
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
+
+
 
 @queue_router.post("/queue/complete")
 async def complete_queue_finish(

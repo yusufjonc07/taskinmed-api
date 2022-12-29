@@ -172,6 +172,7 @@ def confirm_diagnosis(id, db):
         this_queue.update({Queue.step: 4})
         db.commit()
 
+
         next_que = db.query(Queue).filter_by(room=que.room, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
 
         if next_que:

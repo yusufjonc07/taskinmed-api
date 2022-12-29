@@ -25,19 +25,21 @@ async def websocket_endpoint(websocket: WebSocket):
         await manager.broadcast(f"closed")
    
 
-
-
 @queue_ws.get("/queues/waiting")
 async def get_queuegroup_list(db:Session = ActiveSession):
 
-    return db.query(
-        func.min(Queue.number).label("num"), Queue.room
+    return db.query(Queue.id, Queue.number, Queue.room).filter_by(
+        in_room=False, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
+    ).order_by(Queue.number.asc()).all()
 
-    ).filter_by(
-        step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
-    ).group_by(Queue.room).order_by(Queue.number.asc()).all()
+@queue_ws.get("/queues/inroom")
+async def get_queueinroom_list(db:Session = ActiveSession):
+
+    return db.query(Queue.id, Queue.number, Queue.room).filter_by(
+        in_room=True, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
+    ).order_by(Queue.number.asc()).all()
 
 @queue_ws.get("/queues/skipped")
 async def get_queuegroup_skipped(db:Session = ActiveSession):
 
-    return db.query(Queue.number, Queue.room).filter_by(step=2, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.id.asc()).all()
+    return db.query(Queue.id, Queue.number, Queue.room).filter_by(step=2, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.id.asc()).all()
