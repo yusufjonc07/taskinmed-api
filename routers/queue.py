@@ -118,6 +118,26 @@ async def toggle_skipped_func(
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
+@queue_router.get("/queue/goout")
+async def goout_patient_queue(
+    id: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['doctor']:
+
+        next_que = db.query(Queue).filter_by(id=id, step=3)
+
+        next_queue = next_que.first()
+
+        if next_queue:
+
+            next_que.update({Queue.in_room: False})
+            db.commit()
+
+            return "success"
+
+
 
 @queue_router.get("/queue/call")
 async def call_patient_queue(
@@ -133,42 +153,36 @@ async def call_patient_queue(
 
         if next_queue:
 
-            if next_queue.in_room == False:
+            next_que.update({Queue.in_room: True})
+            db.commit()
 
-                next_que.update({Queue.in_room: True})
-                db.commit()
-
-                if len(str(next_queue.room)) == 1:
-                    room_path = f"Ovoz 00{next_queue.room}.m4a"
-                elif len(str(next_queue.room)) == 2:
-                    room_path = f"Ovoz 0{next_queue.room}.m4a"
-                else:
-                    room_path = "none"
-
-                if len(str(next_queue.number)) == 1:
-                    pat_path = f"Ovoz 00{next_queue.number}.m4a"
-                elif len(str(next_queue.number)) == 2:
-                    pat_path = f"Ovoz 0{next_queue.number}.m4a"
-                else:
-                    pat_path = "none"
-
-                await manager.queue({
-                    "room": next_queue.room,
-                    "number": next_queue.number,
-                    "patient": next_queue.patient.surename + " " + next_queue.patient.name,
-                    "service": next_queue.service.name,
-                    "track1": pat_path,
-                    "track2": "queue.m4a",
-                    "track3": room_path,
-                    "track4": "enter_room.m4a"
-                })
+            if len(str(next_queue.room)) == 1:
+                room_path = f"Ovoz 00{next_queue.room}.m4a"
+            elif len(str(next_queue.room)) == 2:
+                room_path = f"Ovoz 0{next_queue.room}.m4a"
             else:
-                next_que.update({Queue.in_room: False})
-                db.commit()
+                room_path = "none"
+
+            if len(str(next_queue.number)) == 1:
+                pat_path = f"Ovoz 00{next_queue.number}.m4a"
+            elif len(str(next_queue.number)) == 2:
+                pat_path = f"Ovoz 0{next_queue.number}.m4a"
+            else:
+                pat_path = "none"
+
+            await manager.queue({
+                "room": next_queue.room,
+                "number": next_queue.number,
+                "patient": next_queue.patient.surename + " " + next_queue.patient.name,
+                "service": next_queue.service.name,
+                "track1": pat_path,
+                "track2": "queue.m4a",
+                "track3": room_path,
+                "track4": "enter_room.m4a"
+            })
 
             return 'success'
 
-        return 0
 
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
