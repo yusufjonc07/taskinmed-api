@@ -38,12 +38,13 @@ async def get_queueinroom_list(db:Session = ActiveSession):
         in_room=True, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
     ).order_by(Queue.number.asc()).all()
 
-@queue_ws.get("/getting_file/{file_name}")
-async def get_image_my(file_name: str):
 
-    path_to_file = f"sounds/{file_name}"
+# @queue_ws.get("/getting_file/{file_name}")
+# async def get_image_my(file_name: str):
 
-    return FileResponse(path_to_file, media_type='audio/m4a')
+#     path_to_file = f"sounds/{file_name}"
+
+#     return FileResponse(path_to_file, media_type='audio/m4a')
 
 
 @queue_ws.get("/queues/skipped")
