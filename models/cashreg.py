@@ -11,6 +11,6 @@ now_sanavaqt = datetime.now()
 class Cashreg(Base):
     __tablename__ = "cashreg"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String, default='')
+    name = Column(String, unique=True)
        
     

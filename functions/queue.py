@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 from models.service import Service
 from models.user import User
 from models.doctor import Doctor
+from models.income import Income
 from models.recall import Recall
 from models.patient import Patient, now_sanavaqt
 from manager import *
@@ -229,10 +230,15 @@ def cancel_queue(id, usr, db):
     this_queue = db.query(Queue).filter_by(id=id).filter(Queue.step > 0)
 
     if this_queue.first():
-        this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
-        db.commit()
+        if this_queue.first().step < 4:
+            this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
 
-        return 'success'
+            for income in this_queue.first().incomes:
+                db.query(Income).filter_by(id=income.id).delete()
+
+            db.commit()
+
+            return 'success'
 
     else:
         raise HTTPException(status_code=400, detail="Queue was not found!")

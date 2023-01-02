@@ -11,6 +11,6 @@ now_sanavaqt = datetime.now()
 class Region(Base):
     __tablename__ = "region"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String, default='')
+    name = Column(String,  unique=True)
        
     

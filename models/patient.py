@@ -25,7 +25,7 @@ class Patient(Base):
     state_id = Column(Integer, ForeignKey('state.id'), default=0)
     region_id = Column(Integer, ForeignKey('region.id'), default=0)
     source_id = Column(Integer, ForeignKey('source.id'), default=0)
-    phone = Column(Integer, default=0)
+    phone = Column(Integer,  unique=True)
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
