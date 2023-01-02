@@ -17,11 +17,13 @@ from routers.income import income_router
 from routers.report import report_router
 from routers.expence import expence_router
 from routers.recipe import recipe_router
+from routers.recall import recall_router
 
 ActiveUser = Depends(get_current_active_user)
 routes = APIRouter(dependencies=[ActiveUser])
 
 
+routes.include_router(recall_router)      
 routes.include_router(report_router)      
 routes.include_router(expence_router)      
 routes.include_router(recipe_router)      

@@ -5,11 +5,15 @@ from sqlalchemy.orm import joinedload
 from models.service import Service
 from models.user import User
 from models.doctor import Doctor
-from models.patient import Patient
+from models.recall import Recall
+from models.patient import Patient, now_sanavaqt
 from manager import *
 from sqlalchemy import or_
 import math
 from trlatin import tarjima
+from datetime import timedelta
+
+ADDING_HOURS = 3
 
 
 def get_count_queues(usr, db):
@@ -185,12 +189,22 @@ def confirm_diagnosis(id, db):
 
 
 
-def complete_diagnosis_finish(id, db):
+def complete_diagnosis_finish(id, usr, db):
 
     this_queue = db.query(Queue).filter_by(id=id, step=4)
+    theque = this_queue.first()
 
-    if this_queue.first():
+    if theque:
         this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt})
+
+        new_recall = Recall(
+            patient_id=theque.patient_id,
+            plan_date=(now_sanavaqt+timedelta(hours=ADDING_HOURS)),
+            user_id=usr.id,
+            queue_id = theque.id
+        )
+
+        db.add(new_recall)
         db.commit()
 
         return db.query(Queue).options(

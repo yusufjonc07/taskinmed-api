@@ -170,16 +170,19 @@ async def call_patient_queue(
             else:
                 pat_path = "none"
 
-            await manager.queue({
-                "room": next_queue.room,
-                "number": next_queue.number,
-                "patient": next_queue.patient.surename + " " + next_queue.patient.name,
-                "service": next_queue.service.name,
-                "track1": pat_path,
-                "track2": "queue.wav",
-                "track3": room_path,
-                "track4": "enter_room.wav"
-            })
+            try:
+                await manager.queue({
+                    "room": next_queue.room,
+                    "number": next_queue.number,
+                    "patient": next_queue.patient.surename + " " + next_queue.patient.name,
+                    "service": next_queue.service.name,
+                    "track1": pat_path,
+                    "track2": "queue.wav",
+                    "track3": room_path,
+                    "track4": "enter_room.wav"
+                })
+            except Exception as e:
+                pass 
 
             return 'success'
 
@@ -215,7 +218,7 @@ async def complete_queue_finish(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'doctor']:
-        return complete_diagnosis_finish(queue_id, db)
+        return complete_diagnosis_finish(queue_id, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 

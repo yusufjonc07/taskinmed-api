@@ -1,0 +1,117 @@
+    
+from fastapi import HTTPException
+from models.recall import Recall
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func
+import math
+
+
+def get_count_recalls(usr, db):
+
+    return db.query(Recall).count()
+
+
+def get_all_recalls(from_date, to_date, queue, completed, page, limit, usr, db):
+
+    if page == 1 or page < 1:
+        offset = 0
+    else:
+        offset = (page-1) * limit
+
+    recalls = db.query(Recall).options(
+        # joinedload('patient'),
+        joinedload('operator'),
+        joinedload('queue').subqueryload("*"),
+    )
+
+    recalls = recalls.filter_by(status=completed)
+
+    if queue:
+        recalls = recalls.filter(Recall.queue_id > 0)
+
+    
+    if completed:
+        recalls = recalls.filter(
+            func.date(Recall.plan_date) >= from_date,
+            func.date(Recall.plan_date) <= to_date,
+        )
+
+    
+
+    recalls = recalls.order_by(Recall.id.desc()).offset(offset).limit(limit)
+
+    return {
+        "data": recalls.all(),
+        "count": math.ceil(recalls.count() / limit),
+        "page": page,
+        "limit": limit,
+    }
+
+
+
+def read_recall(id, usr, db):
+
+    this_recall = db.query(Recall).filter(Recall.id == id).first()
+
+    if this_recall:
+        return this_recall
+    else:
+        raise HTTPException(status_code=400, detail="Recall was not found!")
+
+
+def create_recall(form_data, usr, db):
+
+    new_recall = Recall(
+        patient_id=form_data.patient_id,
+        plan_date=form_data.plan_date,
+    )
+
+    db.add(new_recall)
+
+    db.commit()
+    return new_recall.id
+
+
+
+def talked_recall(id, form_data, usr, db):
+
+    this_recall = db.query(Recall).filter(Recall.id == id)
+
+    if this_recall.first():
+        this_recall.update({
+            Recall.comment: form_data.comment,
+            Recall.talk_type: form_data.talk_type,
+        })
+
+        db.commit()
+        return 'Success'
+    else:
+        raise HTTPException(status_code=400, detail="Recall was not found!")
+
+def update_recall(id, form_data, usr, db):
+
+    this_recall = db.query(Recall).filter(Recall.id == id)
+
+    if this_recall.first():
+        this_recall.update({
+            Recall.plan_date: form_data.plan_date,
+        })
+
+        db.commit()
+        return 'Success'
+    else:
+        raise HTTPException(status_code=400, detail="Recall was not found!")
+
+
+def delete_recall(id, usr, db):
+
+    this_recall = db.query(Recall).filter(Recall.id == id)
+
+    if this_recall.first():
+        this_recall.delete()
+
+        db.commit()
+        return 'This item has been deleted!'
+    else:
+        raise HTTPException(status_code=400, detail="Recall was not found!")       
+    

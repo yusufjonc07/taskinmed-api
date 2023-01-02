@@ -16,7 +16,7 @@ async def get_home(db: Session = ActiveSession):
     route_bind_content = route_bind_content + f"\nfrom fastapi import APIRouter, Depends"
     route_bind_content = route_bind_content + f"\nfrom auth import get_current_active_user"
     
-    table_names = ['car', 'carfac', 'direction', 'driver_direction', 'driver_ds', 'facility', 'order', 'order_seat', 'region', 'seat', 'sms', 'state', 'trip', 'trip_seat', 'user']
+    table_names = ['recall']
 
     for table_name in table_names:
         route_bind_content = route_bind_content + f"\nfrom routers.{table_name} import {table_name}_router"
@@ -250,20 +250,20 @@ async def get_home(db: Session = ActiveSession):
     # {model_content}       
     # ''')
 
-    #     with open(f'./functions/{table_name}.py', 'w') as f:
-    #         f.write(f'''\
-    # {crud_content}       
-    # ''')
+        with open(f'./functions/{table_name}.py', 'w') as f:
+            f.write(f'''\
+    {crud_content}       
+    ''')
 
-    #     with open(f'./schemas/{table_name}.py', 'w') as f:
-    #         f.write(f'''\
-    # {schema_content}       
-    # ''')
+        with open(f'./schemas/{table_name}.py', 'w') as f:
+            f.write(f'''\
+    {schema_content}       
+    ''')
 
-    #     with open(f'./routers/{table_name}.py', 'w') as f:
-    #         f.write(f'''\
-    # {router_content}       
-    # ''')
+        with open(f'./routers/{table_name}.py', 'w') as f:
+            f.write(f'''\
+    {router_content}       
+    ''')
 
 #     with open(f'./routes.py', 'w') as f:
 #         f.write(f'''\
