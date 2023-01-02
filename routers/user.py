@@ -7,10 +7,32 @@ from auth import get_current_active_user
 from settings import UserSchema
 from functions.user import *
 from models.user import *
+from models.setting import *
 from schemas.user import *
 import math
 
+
 user_router = APIRouter(tags=['User Endpoint'])
+
+class MySetting(BaseModel):
+    hour:float
+
+@user_router.put("/setting_update")
+async def update_setting(
+    form_data: MySetting,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    db.query(Setting).update({Setting.recall_hour: form_data.hour})
+    db.commit()
+    return "success"
+
+@user_router.get("/settings")
+async def get_setting(
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    return db.query(Setting).first()
 
 
 @user_router.get("/users", description="This router returns list of the users using pagination")

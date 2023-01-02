@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 from models.service import Service
 from models.user import User
 from models.doctor import Doctor
+from models.setting import Setting
 from models.income import Income
 from models.recall import Recall
 from models.patient import Patient, now_sanavaqt
@@ -13,8 +14,6 @@ from sqlalchemy import or_
 import math
 from trlatin import tarjima
 from datetime import timedelta
-
-ADDING_HOURS = 3
 
 
 def get_count_queues(usr, db):
@@ -48,7 +47,6 @@ def get_all_queues(page, limit, usr, db, step, search):
 
     if usr.role == 'doctor':
         qs = qs.filter(Queue.doctor.has(user_id=usr.id))
-
     if len(search) > 0:
         qs = qs.filter(
             or_(
@@ -62,7 +60,6 @@ def get_all_queues(page, limit, usr, db, step, search):
                 User.name.like(f"%{tarjima(search, 'ru')}%"),
             )       
         )
-
 
     data = qs.order_by(Queue.number.asc()).offset(offset).limit(limit)
 
@@ -197,6 +194,13 @@ def complete_diagnosis_finish(id, usr, db):
 
     if theque:
         this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt})
+
+        setting = db.query(Setting).first()
+
+        if setting:
+            ADDING_HOURS = setting.recall_hour
+        else:
+            ADDING_HOURS = 3
 
         new_recall = Recall(
             patient_id=theque.patient_id,
