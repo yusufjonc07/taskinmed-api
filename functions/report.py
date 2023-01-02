@@ -40,6 +40,7 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) >= from_date,
             func.date(Queue.created_at) <= to_date,
         ) \
+        .group_by(Service.id) \
         .all()
 
     # patients by states
@@ -48,9 +49,11 @@ def get_report_index(from_date, to_date, usr, db):
         .join(State.patients) \
         .join(Patient.queues) \
         .filter(
+            Queue.step > 0,
             func.date(Queue.created_at) >= from_date,
             func.date(Queue.created_at) <= to_date,
         ) \
+        .group_by(State.id) \
         .all()
 
     

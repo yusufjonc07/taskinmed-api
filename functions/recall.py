@@ -36,8 +36,6 @@ def get_all_recalls(from_date, to_date, queue, completed, page, limit, usr, db):
             func.date(Recall.plan_date) <= to_date,
         )
 
-    
-
     recalls = recalls.order_by(Recall.id.desc()).offset(offset).limit(limit)
 
     return {
