@@ -84,7 +84,7 @@ async def get_count_of_calls(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    calls = db.query(Recall).filter_by(completed=False)
+    calls = db.query(Recall).filter_by(status=False)
 
     return {
         "recall": calls.filter(Recall.queue_id > 0).count(),
