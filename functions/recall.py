@@ -83,6 +83,7 @@ def talked_recall(id, form_data, usr, db):
         this_recall.update({
             Recall.comment: form_data.comment,
             Recall.talk_type: form_data.talk_type,
+            Recall.status: True,
         })
 
         db.commit()
