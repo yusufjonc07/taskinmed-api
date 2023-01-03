@@ -27,10 +27,10 @@ class Recall(Base):
     plan_date = Column(DateTime)
     created_at = Column(DateTime, default=now_sanavaqt)
     status = Column(Boolean, default=False)
-    comment = Column(String(255), nullable=True)
+    comment = Column(String(255), default="")
     user_id = Column(Integer, ForeignKey('user.id'))
     operator_id = Column(Integer, ForeignKey('user.id'), default=0)
-    talk_type = Column(String(10), nullable=True)
+    talk_type = Column(String(10), default="")
     queue_id = Column(Integer, ForeignKey('queue.id'), default=0)
 
 

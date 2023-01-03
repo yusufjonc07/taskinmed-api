@@ -7,7 +7,6 @@ import math
 
 
 def get_count_recalls(usr, db):
-
     return db.query(Recall).count()
 
 
@@ -67,6 +66,7 @@ def create_recall(form_data, usr, db):
     new_recall = Recall(
         patient_id=form_data.patient_id,
         plan_date=form_data.plan_date,
+        user_id=usr.id,
     )
 
     db.add(new_recall)
