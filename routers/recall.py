@@ -18,13 +18,14 @@ async def get_recalls_list(
     completed: bool,
     page: int = 1,
     limit: int = 10,
+    patient_id: Optional[int] = 0,
     from_date: Optional[str] = now_sanavaqt.strftime("%Y-%m-01"),
     to_date: Optional[str] = now_sanavaqt.strftime("%Y-%m-%d"),
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return get_all_recalls(from_date, to_date, queue, completed, page, limit, usr, db)
+        return get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limit, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 

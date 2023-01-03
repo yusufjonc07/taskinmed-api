@@ -11,7 +11,7 @@ def get_count_recalls(usr, db):
     return db.query(Recall).count()
 
 
-def get_all_recalls(from_date, to_date, queue, completed, page, limit, usr, db):
+def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limit, usr, db):
 
     if page == 1 or page < 1:
         offset = 0
@@ -25,6 +25,10 @@ def get_all_recalls(from_date, to_date, queue, completed, page, limit, usr, db):
     )
 
     recalls = recalls.filter_by(status=completed)
+
+    if patient_id > 0:
+        recalls = recalls.filter_by(patient_id=patient_id)
+
 
     if queue:
         recalls = recalls.filter(Recall.queue_id > 0)
