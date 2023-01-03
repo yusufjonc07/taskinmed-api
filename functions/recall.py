@@ -41,6 +41,9 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
     else:
         if queue:
             recalls = recalls.filter(Recall.queue_id > 0)
+        else:
+            recalls = recalls.filter(Recall.queue_id == 0)
+
 
     recalls = recalls.order_by(Recall.id.desc()).offset(offset).limit(limit)
 
