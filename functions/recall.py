@@ -30,8 +30,7 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
         recalls = recalls.filter_by(patient_id=patient_id)
 
 
-    if queue:
-        recalls = recalls.filter(Recall.queue_id > 0)
+    
 
     
     if completed:
@@ -39,6 +38,9 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
             func.date(Recall.plan_date) >= from_date,
             func.date(Recall.plan_date) <= to_date,
         )
+    else:
+        if queue:
+            recalls = recalls.filter(Recall.queue_id > 0)
 
     recalls = recalls.order_by(Recall.id.desc()).offset(offset).limit(limit)
 
