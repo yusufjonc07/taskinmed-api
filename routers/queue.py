@@ -241,7 +241,7 @@ async def cancel_one_queue(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if usr.role in ['admin', 'operator', 'reception']:
+    if usr.role in ['admin', 'operator', 'reception', 'casher']:
         return cancel_queue(id, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
