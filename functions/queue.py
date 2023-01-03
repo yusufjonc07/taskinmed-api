@@ -233,13 +233,13 @@ def cancel_queue(id, usr, db):
 
     this_queue = db.query(Queue).filter_by(id=id).filter(Queue.step > 0)
 
+
+
     if this_queue.first():
         if this_queue.first().step < 4:
+            
             this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
-
-            for income in this_queue.first().incomes:
-                db.query(Income).filter_by(id=income.id).delete()
-
+            db.query(Income).filter_by(queue_id=id).delete()
             db.commit()
 
             return 'success'
