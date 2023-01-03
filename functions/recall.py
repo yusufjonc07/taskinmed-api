@@ -20,7 +20,6 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
     recalls = db.query(Recall).options(
         joinedload('patient'),
         joinedload('operator'),
-        joinedload('queue'),
     )
 
     recalls = recalls.filter_by(status=completed)

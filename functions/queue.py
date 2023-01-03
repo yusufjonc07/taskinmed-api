@@ -21,14 +21,14 @@ def get_count_queues(usr, db):
     return db.query(Queue).count()
 
 
-def get_all_queues(page, limit, usr, db, step, search):
+def get_all_queues(page, limit, usr, db, step, search, patient_id):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    qs = db.query(Queue).filter_by(step=step) \
+    qs = db.query(Queue) \
         .join(Queue.service, aliased=True) \
         .join(Queue.patient, aliased=True) \
         .join(Queue.doctor, aliased=True) \
@@ -61,7 +61,12 @@ def get_all_queues(page, limit, usr, db, step, search):
             )       
         )
 
-    data = qs.order_by(Queue.number.asc()).offset(offset).limit(limit)
+    if patient_id > 0:
+        qs = qs.filter(Queue.patient_id==patient_id).order_by(Queue.id.desc())
+    else:
+        qs = qs.filter(Queue.step==step).order_by(Queue.number.asc())
+
+    data = qs.offset(offset).limit(limit)
 
     return {
         "data": data.all(),

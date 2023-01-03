@@ -20,11 +20,12 @@ async def get_queues_list(
     page: int = 1,
     limit: int = 10,
     step: Optional[int] = 0,
+    patient_id: Optional[int] = 0,
     search: Optional[str] = '',
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    return get_all_queues(page, limit, usr, db, step, search)
+    return get_all_queues(page, limit, usr, db, step, search, patient_id)
 
 
 
