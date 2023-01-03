@@ -76,5 +76,18 @@ async def delete_one_recall(
     if not usr.role in ['any_role']:
         return delete_recall(id, usr, db)
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Access denided!")
+
+
+@recall_router.get("/count_of_calls")
+async def get_count_of_calls(
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    calls = db.query(Recall).filter_by(completed=False)
+
+    return {
+        "recall": calls.filter(Recall.queue_id > 0).count(),
+        "planning": calls.filter(Recall.queue_id == 0).count()
+    }
     
