@@ -18,9 +18,9 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
         offset = (page-1) * limit
 
     recalls = db.query(Recall).options(
-        # joinedload('patient'),
+        joinedload('patient'),
         joinedload('operator'),
-        joinedload('queue').subqueryload("*"),
+        joinedload('queue'),
     )
 
     recalls = recalls.filter_by(status=completed)
@@ -65,7 +65,7 @@ def create_recall(form_data, usr, db):
 
     new_recall = Recall(
         patient_id=form_data.patient_id,
-        plan_date=form_data.plan_date,
+        plan_date=form_data.plan_date,  
         user_id=usr.id,
     )
 
