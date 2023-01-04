@@ -22,7 +22,7 @@ class Income(Base):
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
     cashreg_id = Column(Integer, ForeignKey('cashreg.id'), default=0)
     created_at = Column(DateTime, default=now_sanavaqt)
-    updated_at = Column(DateTime, default='0000-00-00 00:00:00')
+    updated_at = Column(DateTime, default=now_sanavaqt)
     taken = Column(Boolean, default=False)
     method = Column(String, default="naqd")
 
