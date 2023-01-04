@@ -37,6 +37,7 @@ async def get_setting(
 
 @user_router.get("/users", description="This router returns list of the users using pagination")
 async def get_users_list(
+    search: Optional[str] = '',
     page: int = 1,
     limit: int = 10,
     db:Session = ActiveSession,
@@ -44,12 +45,9 @@ async def get_users_list(
 ):
     if not usr.role in ['any_role']:
 
-        return {
-            "data": get_all_users(page, limit, usr, db),
-            "count": math.ceil(get_count_users(usr, db) / limit),
-            "page": page,
-            "limit": limit,
-        }
+        return get_all_users(search, page, limit, usr, db)
+
+       
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
