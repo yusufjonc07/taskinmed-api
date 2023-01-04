@@ -218,7 +218,7 @@ async def complete_queue_finish(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if usr.role in ['admin', 'doctor']:
+    if usr.role in ['admin', 'doctor', 'reception']:
         return complete_diagnosis_finish(queue_id, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
