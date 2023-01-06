@@ -59,7 +59,7 @@ def read_expence(id, usr, db):
         raise HTTPException(status_code=400, detail="Expence was not found!")
 
 
-def create_expence(form_data, usr, db):
+def create_expence(req, form_data, usr, db):
 
     new_expence = Expence(
         comment=form_data.comment,
@@ -73,7 +73,7 @@ def create_expence(form_data, usr, db):
     return new_expence.id
 
 
-def update_expence(id, form_data, usr, db):
+def update_expence(req, id, form_data, usr, db):
 
     this_expence = db.query(Expence).filter(Expence.id == id)
 

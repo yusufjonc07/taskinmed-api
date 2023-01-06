@@ -3,7 +3,7 @@ from auth import auth_router
 from routes import routes
 from gii import gii_router
 from wsroutes import queue_ws
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
 
 app = FastAPI(

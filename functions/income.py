@@ -61,7 +61,7 @@ def read_income(id, usr, db):
         raise HTTPException(status_code=400, detail="Income was not found!")
 
 
-def create_income(form_data, usr, db):
+def create_income(req, form_data, usr, db):
 
     upt = db.query(Queue).filter_by(id=form_data.queue_id, step=1)
     queue = upt.first()

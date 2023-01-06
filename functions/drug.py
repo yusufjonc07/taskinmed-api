@@ -53,7 +53,7 @@ def read_drug(id, usr, db):
         raise HTTPException(status_code=400, detail="Drug was not found!")
 
 
-def create_drug(form_data, usr, db):
+def create_drug(req, form_data, usr, db):
 
     new_drug = Drug(
         name=form_data.name,
@@ -65,7 +65,7 @@ def create_drug(form_data, usr, db):
     return new_drug.id
 
 
-def update_drug(id, form_data, usr, db):
+def update_drug(req, id, form_data, usr, db):
 
     this_drug = db.query(Drug).filter(Drug.id == id)
 

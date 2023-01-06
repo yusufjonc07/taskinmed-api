@@ -28,7 +28,7 @@ def read_service(id, usr, db):
         raise HTTPException(status_code=400, detail="Service was not found!")
 
 
-def create_service(form_data, usr, db):
+def create_service(req, form_data, usr, db):
 
     new_service = Service(
         name=form_data.name,
@@ -42,7 +42,7 @@ def create_service(form_data, usr, db):
     return new_service.id
 
 
-def update_service(id, form_data, usr, db):
+def update_service(req, id, form_data, usr, db):
 
     this_service = db.query(Service).filter(Service.id == id)
 

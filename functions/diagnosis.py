@@ -43,7 +43,7 @@ def read_diagnosis(id, usr, db):
         raise HTTPException(status_code=400, detail="Diagnosis was not found!")
 
 
-def create_diagnosis(form_data, usr, db):
+def create_diagnosis(req, form_data, usr, db):
     
     upt = db.query(Queue).filter_by(id=form_data.queue_id, step=3)
     queue = upt.first()
@@ -71,7 +71,7 @@ def create_diagnosis(form_data, usr, db):
     
 
 
-def update_diagnosis(id, form_data, usr, db):
+def update_diagnosis(req, id, form_data, usr, db):
 
     this_diagnosis = db.query(Diagnosis).filter(Diagnosis.id == id)
 

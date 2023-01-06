@@ -37,7 +37,7 @@ async def create_new_region(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_region(form_data, usr, db)
+        return create_region(req, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -50,7 +50,7 @@ async def update_one_region(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_region(id, form_data, usr, db)
+        return update_region(req, id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

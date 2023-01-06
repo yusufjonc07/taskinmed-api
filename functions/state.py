@@ -28,7 +28,7 @@ def read_state(id, usr, db):
         raise HTTPException(status_code=400, detail="State was not found!")
 
 
-def create_state(form_data, usr, db):
+def create_state(req, form_data, usr, db):
 
     new_state = State(
         name=form_data.name,
@@ -41,7 +41,7 @@ def create_state(form_data, usr, db):
     return new_state.id
 
 
-def update_state(id, form_data, usr, db):
+def update_state(req, id, form_data, usr, db):
 
     this_state = db.query(State).filter(State.id == id)
 

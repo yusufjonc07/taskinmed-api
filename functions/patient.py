@@ -59,7 +59,7 @@ def read_patient(id, usr, db):
         raise HTTPException(status_code=400, detail="Patient was not found!")
 
 
-def create_patient(form_data, usr, db):
+def create_patient(req, form_data, usr, db):
 
     new_patient = Patient(
         name=form_data.name,
@@ -81,7 +81,7 @@ def create_patient(form_data, usr, db):
     return new_patient.id
 
 
-def update_patient(id, form_data, usr, db):
+def update_patient(req, id, form_data, usr, db):
 
     this_patient = db.query(Patient).filter(Patient.id == id)
 

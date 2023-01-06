@@ -1,5 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -66,7 +66,7 @@ async def update_one_recipe(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_recipe(id, form_data, usr, db)
+        return update_recipe(req, id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
 

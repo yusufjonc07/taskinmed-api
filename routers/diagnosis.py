@@ -1,5 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -9,6 +9,8 @@ from functions.diagnosis import *
 from models.diagnosis import *
 from schemas.diagnosis import *
 import math
+from functions.request import insert_req
+
 
 diagnosis_router = APIRouter(tags=['Diagnosis Endpoint'])
 
@@ -39,11 +41,12 @@ async def get_diagnosiss_list(
 @diagnosis_router.post("/diagnosis/create", description="This router is able to add new diagnosis and return diagnosis id")
 async def create_new_diagnosis(
     form_data: NewDiagnosis,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_diagnosis(form_data, usr, db)
+        return create_diagnosis(req, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -52,11 +55,12 @@ async def create_new_diagnosis(
 async def update_one_diagnosis(
     id: int,
     form_data: UpdateDiagnosis,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_diagnosis(id, form_data, usr, db)
+        return update_diagnosis(req, id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

@@ -1,5 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -37,11 +37,12 @@ async def get_doctors_list(
 @doctor_router.post("/doctor/create", description="This router is able to add new doctor and return doctor id")
 async def create_new_doctor(
     form_data: NewDoctor,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_doctor(form_data, usr, db)
+        return create_doctor(req, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -50,11 +51,12 @@ async def create_new_doctor(
 async def update_one_doctor(
     id: int,
     form_data: NewDoctor,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_doctor(id, form_data, usr, db)
+        return update_doctor(req, id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

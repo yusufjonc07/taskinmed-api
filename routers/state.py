@@ -1,5 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -42,7 +42,7 @@ async def create_new_state(
     if not usr.role in ['any_role']:
 
         for form_data in form_datas:
-            create_state(form_data, usr, db)
+            create_state(req, form_data, usr, db)
 
         raise HTTPException(status_code=200, detail="States were created successfully!")
 
@@ -56,7 +56,7 @@ async def update_one_state(
 ):
     if not usr.role in ['any_role']:
 
-        return update_state(id, form_data, usr, db)
+        return update_state(req, id, form_data, usr, db)
 
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       

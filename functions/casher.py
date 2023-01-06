@@ -1,8 +1,9 @@
     
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from models.casher import Casher
 from sqlalchemy.orm import subqueryload, joinedload
 from models.user import User
+from functions.request import insert_req
 
 
 
@@ -48,7 +49,7 @@ def read_casher(id, usr, db):
         raise HTTPException(status_code=400, detail="Casher was not found!")
 
 
-def create_casher(form_data, usr, db):
+def create_casher(req: Request, form_data, usr, db):
 
     new_casher = Casher(
         user_id=form_data.user_id,
@@ -57,12 +58,14 @@ def create_casher(form_data, usr, db):
     )
 
     db.add(new_casher)
+    # db.commit()
 
-    db.commit()
+    insert_req(usr, 'post', form_data, req, db)
+
     return new_casher.id
 
 
-def update_casher(id, form_data, usr, db):
+def update_casher(req, id, form_data, usr, db):
 
     this_casher = db.query(Casher).filter(Casher.id == id)
 
@@ -74,6 +77,7 @@ def update_casher(id, form_data, usr, db):
         })
 
         db.commit()
+        
         return 'Success'
     else:
         raise HTTPException(status_code=400, detail="Casher was not found!")

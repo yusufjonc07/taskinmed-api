@@ -1,5 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -38,6 +38,7 @@ async def get_incomes_list(
 async def update_one_income(
     id: int,
     queue_id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):

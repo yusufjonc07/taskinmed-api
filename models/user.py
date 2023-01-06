@@ -13,7 +13,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, default='')
     role = Column(String, default='')
-    phone = Column(Integer, default=0)
+    phone = Column(Integer, unique=True)
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
     username = Column(String, default='')

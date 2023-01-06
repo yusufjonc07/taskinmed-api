@@ -60,7 +60,7 @@ def read_doctor(id, usr, db):
         raise HTTPException(status_code=400, detail="Doctor was not found!")
 
 
-def create_doctor(form_data, usr, db):
+def create_doctor(req, form_data, usr, db):
 
     if form_data.cost < 0:
         raise HTTPException(status_code=422, detail="Cost of doctor must be higher than 0!")
@@ -78,7 +78,7 @@ def create_doctor(form_data, usr, db):
     return new_doctor.id
 
 
-def update_doctor(id, form_data, usr, db):
+def update_doctor(req, id, form_data, usr, db):
 
     this_doctor = db.query(Doctor).filter(Doctor.id == id)
 

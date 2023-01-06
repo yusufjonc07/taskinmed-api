@@ -51,7 +51,7 @@ def create_recipe(form_data, dg_id, queue, usr, db):
     return new_recipe.id
 
 
-def update_recipe(id, form_data, usr, db):
+def update_recipe(req, id, form_data, usr, db):
 
     this_recipe = db.query(Recipe).filter(Recipe.id == id)
 

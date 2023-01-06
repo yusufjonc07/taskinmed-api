@@ -5,11 +5,15 @@ from sqlalchemy.orm import joinedload
 from models.service import Service
 from models.user import User
 from models.doctor import Doctor
-from models.patient import Patient
+from models.setting import Setting
+from models.income import Income
+from models.recall import Recall
+from models.patient import Patient, now_sanavaqt
 from manager import *
 from sqlalchemy import or_
 import math
 from trlatin import tarjima
+from datetime import timedelta
 
 
 def get_count_queues(usr, db):
@@ -17,14 +21,14 @@ def get_count_queues(usr, db):
     return db.query(Queue).count()
 
 
-def get_all_queues(page, limit, usr, db, step, search):
+def get_all_queues(page, limit, usr, db, step, search, patient_id):
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    qs = db.query(Queue).filter_by(step=step) \
+    qs = db.query(Queue) \
         .join(Queue.service, aliased=True) \
         .join(Queue.patient, aliased=True) \
         .join(Queue.doctor, aliased=True) \
@@ -43,7 +47,6 @@ def get_all_queues(page, limit, usr, db, step, search):
 
     if usr.role == 'doctor':
         qs = qs.filter(Queue.doctor.has(user_id=usr.id))
-
     if len(search) > 0:
         qs = qs.filter(
             or_(
@@ -58,8 +61,12 @@ def get_all_queues(page, limit, usr, db, step, search):
             )       
         )
 
+    if patient_id > 0:
+        qs = qs.filter(Queue.patient_id==patient_id).order_by(Queue.id.desc())
+    else:
+        qs = qs.filter(Queue.step==step).order_by(Queue.number.asc())
 
-    data = qs.order_by(Queue.number.asc()).offset(offset).limit(limit)
+    data = qs.offset(offset).limit(limit)
 
     return {
         "data": data.all(),
@@ -93,7 +100,7 @@ def read_queue(id, usr, db):
         raise HTTPException(status_code=400, detail="Queue was not found!")
 
 
-def create_queue(form_data, p_id, usr, db):
+def create_queue(rq, form_data, p_id, usr, db):
 
     try:
         last_queue = db.query(Queue).filter_by(room=form_data.room, date=form_data.date).order_by(Queue.number.desc()).first()
@@ -133,7 +140,7 @@ def get_unpaid_queues(db):
             .subqueryload('drug'),
         ).filter_by(step=1).order_by(Queue.id.desc()).all()
 
-def update_queue(id, form_data, usr, db):
+def update_queue(req, id, form_data, usr, db):
 
     this_queue = db.query(Queue).filter(Queue.id == id)
 
@@ -185,12 +192,29 @@ def confirm_diagnosis(id, db):
 
 
 
-def complete_diagnosis_finish(id, db):
+def complete_diagnosis_finish(id, usr, db):
 
     this_queue = db.query(Queue).filter_by(id=id, step=4)
+    theque = this_queue.first()
 
-    if this_queue.first():
+    if theque:
         this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt})
+
+        setting = db.query(Setting).first()
+
+        if setting:
+            ADDING_HOURS = setting.recall_hour
+        else:
+            ADDING_HOURS = 3
+
+        new_recall = Recall(
+            patient_id=theque.patient_id,
+            plan_date=(now_sanavaqt+timedelta(hours=ADDING_HOURS)),
+            user_id=usr.id,
+            queue_id = theque.id
+        )
+
+        db.add(new_recall)
         db.commit()
 
         return db.query(Queue).options(
@@ -214,11 +238,16 @@ def cancel_queue(id, usr, db):
 
     this_queue = db.query(Queue).filter_by(id=id).filter(Queue.step > 0)
 
-    if this_queue.first():
-        this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
-        db.commit()
 
-        return 'success'
+
+    if this_queue.first():
+        if this_queue.first().step < 4:
+            
+            this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
+            db.query(Income).filter_by(queue_id=id).delete()
+            db.commit()
+
+            return 'success'
 
     else:
         raise HTTPException(status_code=400, detail="Queue was not found!")

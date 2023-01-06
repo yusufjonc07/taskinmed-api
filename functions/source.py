@@ -28,7 +28,7 @@ def read_source(id, usr, db):
         raise HTTPException(status_code=400, detail="Source was not found!")
 
 
-def create_source(form_data, usr, db):
+def create_source(req, form_data, usr, db):
 
     new_source = Source(
         name=form_data.name,
@@ -40,7 +40,7 @@ def create_source(form_data, usr, db):
     return new_source.id
 
 
-def update_source(id, form_data, usr, db):
+def update_source(req, id, form_data, usr, db):
 
     this_source = db.query(Source).filter(Source.id == id)
 

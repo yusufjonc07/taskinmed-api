@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from models.user import User
 from auth import get_password_hash
 from sqlalchemy.orm import joinedload
+from sqlalchemy import or_
+import math
 
 
 def get_count_users(usr, db):
@@ -10,18 +12,32 @@ def get_count_users(usr, db):
     return db.query(User).count()
 
 
-def get_all_users(page, limit, usr, db):    
+def get_all_users(search, page, limit, usr, db):    
 
     if page == 1 or page < 1:
         offset = 0
     else:
         offset = (page-1) * limit
 
-    return db.query(User).options(
+    users = db.query(User).options(
         joinedload('doctors').subqueryload('service'),
         joinedload('cashers').subqueryload('cashreg'),
-    ).order_by(User.id.desc()).offset(offset).limit(limit).all()
+    )
 
+    if len(search) > 0:
+        users = users.filter(
+            or_(
+                User.name.like(f"%{search}%"),
+                User.phone.like(f"%{search}%")
+            )
+        )
+
+    return {
+        "data": users.order_by(User.id.desc()).offset(offset).limit(limit).all(),
+        "count": math.ceil(users.count() / limit),
+        "page": page,
+        "limit": limit,
+    }
 
 def read_user(id, usr, db):
 
@@ -33,7 +49,7 @@ def read_user(id, usr, db):
         raise HTTPException(status_code=400, detail="User was not found!")
 
 
-def create_user(form_data, usr, db):
+def create_user(req, form_data, usr, db):
 
     new_user = User(
         name=form_data.name,
@@ -50,7 +66,7 @@ def create_user(form_data, usr, db):
     return new_user.id
 
 
-def update_user(id, form_data, usr, db):
+def update_user(req, id, form_data, usr, db):
 
     this_user = db.query(User).filter(User.id == id)
 

@@ -27,7 +27,7 @@ def read_cashreg(id, usr, db):
         raise HTTPException(status_code=400, detail="Cashreg was not found!")
 
 
-def create_cashreg(form_data, usr, db):
+def create_cashreg(req, form_data, usr, db):
 
     new_cashreg = Cashreg(
         name=form_data.name,
@@ -39,7 +39,7 @@ def create_cashreg(form_data, usr, db):
     return new_cashreg.id
 
 
-def update_cashreg(id, form_data, usr, db):
+def update_cashreg(req, id, form_data, usr, db):
 
     this_cashreg = db.query(Cashreg).filter(Cashreg.id == id)
 

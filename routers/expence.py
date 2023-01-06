@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -38,11 +38,12 @@ async def get_expences_list(
 @expence_router.post("/expence/create", description="This router is able to add new expence and return expence id")
 async def create_new_expence(
     form_data: NewExpence,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_expence(form_data, usr, db)
+        return create_expence(req, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -50,12 +51,13 @@ async def create_new_expence(
 @expence_router.put("/expence/{id}/update", description="This router is able to update expence")
 async def update_one_expence(
     id: int,
+    req: Request,
     form_data: NewExpence,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_expence(id, form_data, usr, db)
+        return update_expence(req, id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

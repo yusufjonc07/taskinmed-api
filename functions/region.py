@@ -29,7 +29,7 @@ def read_region(id, usr, db):
         raise HTTPException(status_code=400, detail="Region was not found!")
 
 
-def create_region(form_data, usr, db):
+def create_region(req, form_data, usr, db):
 
     new_region = Region(
         name=form_data.name,
@@ -41,7 +41,7 @@ def create_region(form_data, usr, db):
     return new_region.id
 
 
-def update_region(id, form_data, usr, db):
+def update_region(req, id, form_data, usr, db):
 
     this_region = db.query(Region).filter(Region.id == id)
 

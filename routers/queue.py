@@ -1,5 +1,5 @@
 from typing import Optional, List  
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from fastapi import HTTPException
 from db import ActiveSession
 from sqlalchemy.orm import Session
@@ -20,11 +20,12 @@ async def get_queues_list(
     page: int = 1,
     limit: int = 10,
     step: Optional[int] = 0,
+    patient_id: Optional[int] = 0,
     search: Optional[str] = '',
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    return get_all_queues(page, limit, usr, db, step, search)
+    return get_all_queues(page, limit, usr, db, step, search, patient_id)
 
 
 
@@ -41,6 +42,7 @@ async def get_queues_unit(
 async def create_new_queue( 
     p_id: int,
     form_datas: List[NewQueue],
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -48,7 +50,7 @@ async def create_new_queue(
 
     if usr.role in ['admin', 'operator', 'reception']:
         for form_data in form_datas:
-            create_queue(form_data, p_id, usr, db)
+            create_queue(req, form_data, p_id, usr, db)
         return 'success'
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
@@ -57,11 +59,12 @@ async def create_new_queue(
 @queue_router.post("/cashreg/confirm", description="This router is able to add new income and return income id")
 async def create_new_income(
     form_data: NewIncome,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_income(form_data, usr, db)
+        return create_income(req, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -69,6 +72,7 @@ async def create_new_income(
 @queue_router.post("/queue_toggle_skipped", description="This router is able to add new income and return income id")
 async def toggle_skipped_func(
     id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -83,16 +87,16 @@ async def toggle_skipped_func(
                 db.commit()
 
                 if len(str(queue.room)) == 1:
-                    room_path = f"Ovoz 00{queue.room}.m4a"
+                    room_path = f"Ovoz 00{queue.room}.wav"
                 elif len(str(queue.room)) == 2:
-                    room_path = f"Ovoz 0{queue.room}.m4a"
+                    room_path = f"Ovoz 0{queue.room}.wav"
                 else:
                     room_path = "none"
 
                 if len(str(queue.number)) == 1:
-                    pat_path = f"Ovoz 00{queue.number}.m4a"
+                    pat_path = f"Ovoz 00{queue.number}.wav"
                 elif len(str(queue.number)) == 2:
-                    pat_path = f"Ovoz 0{queue.number}.m4a"
+                    pat_path = f"Ovoz 0{queue.number}.wav"
                 else:
                     pat_path = "none"
 
@@ -102,9 +106,9 @@ async def toggle_skipped_func(
                     "patient": queue.patient.surename + " " + queue.patient.name,
                     "service": queue.service.name,
                     "track1": pat_path,
-                    "track2": "queue.m4a",
+                    "track2": "queue.wav",
                     "track3": room_path,
-                    "track4": "enter_room.m4a"
+                    "track4": "enter_room.wav"
                 })
 
 
@@ -118,10 +122,10 @@ async def toggle_skipped_func(
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
-
-@queue_router.get("/queue/call")
-async def call_patient_queue(
+@queue_router.get("/queue/goout")
+async def goout_patient_queue(
     id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -133,42 +137,62 @@ async def call_patient_queue(
 
         if next_queue:
 
-            if next_queue.in_room == False:
+            next_que.update({Queue.in_room: False})
+            db.commit()
 
-                next_que.update({Queue.in_room: True})
-                db.commit()
 
-                if len(str(next_queue.room)) == 1:
-                    room_path = f"Ovoz 00{next_queue.room}.m4a"
-                elif len(str(next_queue.room)) == 2:
-                    room_path = f"Ovoz 0{next_queue.room}.m4a"
-                else:
-                    room_path = "none"
+            return "success"
 
-                if len(str(next_queue.number)) == 1:
-                    pat_path = f"Ovoz 00{next_queue.number}.m4a"
-                elif len(str(next_queue.number)) == 2:
-                    pat_path = f"Ovoz 0{next_queue.number}.m4a"
-                else:
-                    pat_path = "none"
 
+
+@queue_router.get("/queue/call")
+async def call_patient_queue(
+    id: int,
+    req: Request,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role in ['doctor']:
+
+        next_que = db.query(Queue).filter_by(id=id, step=3)
+
+        next_queue = next_que.first()
+
+        if next_queue:
+
+            next_que.update({Queue.in_room: True})
+            db.commit()
+
+            if len(str(next_queue.room)) == 1:
+                room_path = f"Ovoz 00{next_queue.room}.wav"
+            elif len(str(next_queue.room)) == 2:
+                room_path = f"Ovoz 0{next_queue.room}.wav"
+            else:
+                room_path = "none"
+
+            if len(str(next_queue.number)) == 1:
+                pat_path = f"Ovoz 00{next_queue.number}.wav"
+            elif len(str(next_queue.number)) == 2:
+                pat_path = f"Ovoz 0{next_queue.number}.wav"
+            else:
+                pat_path = "none"
+
+            try:
                 await manager.queue({
                     "room": next_queue.room,
                     "number": next_queue.number,
                     "patient": next_queue.patient.surename + " " + next_queue.patient.name,
                     "service": next_queue.service.name,
                     "track1": pat_path,
-                    "track2": "queue.m4a",
+                    "track2": "queue.wav",
                     "track3": room_path,
-                    "track4": "enter_room.m4a"
+                    "track4": "enter_room.wav"
                 })
-            else:
-                next_que.update({Queue.in_room: False})
-                db.commit()
+            except Exception as e:
+                pass 
 
             return 'success'
 
-        return 0
 
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
@@ -200,8 +224,8 @@ async def complete_queue_finish(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if usr.role in ['admin', 'doctor']:
-        return complete_diagnosis_finish(queue_id, db)
+    if usr.role in ['admin', 'doctor', 'reception']:
+        return complete_diagnosis_finish(queue_id, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -214,7 +238,7 @@ async def update_one_queue(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'operator', 'reception']:
-        return update_queue(id, form_data, usr, db)
+        return update_queue(req, id, form_data, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     
@@ -224,7 +248,7 @@ async def cancel_one_queue(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    if usr.role in ['admin', 'operator', 'reception']:
+    if usr.role in ['admin', 'operator', 'reception', 'casher']:
         return cancel_queue(id, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       

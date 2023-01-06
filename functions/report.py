@@ -1,10 +1,12 @@
 from fastapi import HTTPException
 from models.state import State
+from models.source import Source
 from sqlalchemy import func
 from models.queue import Queue
 from models.service import Service
 from models.patient import Patient
 from models.user import User
+from models.doctor import Doctor
 from models.income import Income
 from models.expence import Expence
 from sqlalchemy.orm import joinedload
@@ -40,7 +42,8 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) >= from_date,
             func.date(Queue.created_at) <= to_date,
         ) \
-        .all()
+        .group_by(Service.id)
+        
 
     # patients by states
 
@@ -48,10 +51,34 @@ def get_report_index(from_date, to_date, usr, db):
         .join(State.patients) \
         .join(Patient.queues) \
         .filter(
+            Queue.step > 0,
             func.date(Queue.created_at) >= from_date,
             func.date(Queue.created_at) <= to_date,
         ) \
-        .all()
+        .group_by(State.id)
+        
+
+    sources = db.query(func.count(Queue.id).label("count"), Source.id, Source.name) \
+        .join(Source.patients) \
+        .join(Patient.queues) \
+        .filter(
+            Queue.step > 0,
+            func.date(Queue.created_at) >= from_date,
+            func.date(Queue.created_at) <= to_date,
+        ) \
+        .group_by(Source.id)
+
+    doctors = db.query(func.sum(Income.value).label("summa"), User.name) \
+        .join(Income.queue) \
+        .join(Queue.doctor) \
+        .join(Doctor.user) \
+        .filter(
+            Income.value > 0,
+            func.date(Income.created_at) >= from_date,
+            func.date(Income.created_at) <= to_date,
+        ) \
+        .group_by(User.id)
+        
 
     
     income = db.query(func.sum(Income.value)) .filter(
@@ -69,8 +96,10 @@ def get_report_index(from_date, to_date, usr, db):
 
 
     return {
-        'states': patrep,
-        'services': serrep,
+        'states': patrep.all(),
+        'services': serrep.all(),
+        'sources': sources.all(),
+        'doctors': doctors.all(),
         'income': income,
         'expence': expence,
     }

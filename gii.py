@@ -60,7 +60,7 @@ async def get_home(db: Session = ActiveSession):
         crud_content = ""
         crud_content= crud_content + "\nfrom fastapi import HTTPException"
         crud_content = crud_content + f"\nfrom models.{table_name} import {model_class_name}"
-        create_of_crud = f"\n\n\ndef create_{table_name}(form_data, usr, db):"
+        create_of_crud = f"\n\n\ndef create_{table_name}(req, form_data, usr, db):"
         create_of_crud = create_of_crud + f"\n\n    new_{table_name} = {model_class_name}("
 
 
@@ -92,7 +92,7 @@ async def get_home(db: Session = ActiveSession):
         delete_of_crud = delete_of_crud + f"\n        raise HTTPException(status_code=400, detail=\"{model_class_name} was not found!\")"
        
 
-        update_of_crud = f"\n\n\ndef update_{table_name}(id, form_data, usr, db):"
+        update_of_crud = f"\n\n\ndef update_{table_name}(req, id, form_data, usr, db):"
         update_of_crud = update_of_crud + f"\n\n    this_{table_name} = db.query({model_class_name}).filter({model_class_name}.id == id)"
         update_of_crud = update_of_crud + f"\n\n    if this_{table_name}.first():"
         update_of_crud = update_of_crud + f"\n        this_{table_name}.update("+"{"
@@ -129,7 +129,7 @@ async def get_home(db: Session = ActiveSession):
         create_of_router = create_of_router + "\n    db:Session = ActiveSession,"
         create_of_router = create_of_router + "\n    usr: UserSchema = Depends(get_current_active_user)\n):"
         create_of_router = create_of_router + "\n    if not usr.role in ['any_role']:"
-        create_of_router = create_of_router + f"\n        return create_{table_name}(form_data, usr, db)"
+        create_of_router = create_of_router + f"\n        return create_{table_name}(req, form_data, usr, db)"
         create_of_router = create_of_router + "\n    else:"
         create_of_router = create_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
 
@@ -141,7 +141,7 @@ async def get_home(db: Session = ActiveSession):
         update_of_router = update_of_router + "\n    db:Session = ActiveSession,"
         update_of_router = update_of_router + "\n    usr: UserSchema = Depends(get_current_active_user)\n):"
         update_of_router = update_of_router + "\n    if not usr.role in ['any_role']:"
-        update_of_router = update_of_router + f"\n        return update_{table_name}(id, form_data, usr, db)"
+        update_of_router = update_of_router + f"\n        return update_{table_name}(req, id, form_data, usr, db)"
         update_of_router = update_of_router + "\n    else:"
         update_of_router = update_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
         # ./ Beginning of ROUTER functions generation part
