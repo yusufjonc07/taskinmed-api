@@ -1,10 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.drug import *
 from models.drug import *
 from schemas.drug import *
@@ -36,11 +31,15 @@ async def get_drugs_list(
 @drug_router.post("/drug/create", description="This router is able to add new drug and return drug id")
 async def create_new_drug(
     form_data: NewDrug,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_drug(form_data, usr, db)
+        res = create_drug(form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -49,11 +48,15 @@ async def create_new_drug(
 async def update_one_drug(
     id: int,
     form_data: NewDrug,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_drug(id, form_data, usr, db)
+        res = update_drug(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

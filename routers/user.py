@@ -1,10 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.user import *
 from models.user import *
 from models.setting import *
@@ -23,8 +18,9 @@ async def update_setting(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    db.query(Setting).update({Setting.recall_hour: form_data.hour})
+    db.query(Setting).update({Setting.recall_hour: form_data.hour, Setting.upt: True})
     db.commit()
+    
     return "success"
 
 @user_router.get("/settings")
@@ -59,7 +55,10 @@ async def create_new_user(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_user(form_data, usr, db)
+        res = create_user(form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -72,7 +71,10 @@ async def update_one_user(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_user(id, form_data, usr, db)
+        res = update_user(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

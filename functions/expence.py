@@ -81,6 +81,7 @@ def update_expence(id, form_data, usr, db):
         this_expence.update({
             Expence.comment: form_data.comment,
             Expence.value: form_data.value,
+            Expence.upt: True,
         })
 
         db.commit()

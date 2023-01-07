@@ -1,6 +1,4 @@
-    
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
+from fastapi import Depends, APIRouter, HTTPException, Request
 from db import ActiveSession
 from sqlalchemy.orm import Session
 from auth import get_current_active_user
@@ -33,11 +31,15 @@ async def get_recalls_list(
 @recall_router.post("/recall/create", description="This router is able to add new recall and return recall id")
 async def create_new_recall(
     form_data: NewRecall,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_recall(form_data, usr, db)
+        res = create_recall(form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -46,11 +48,15 @@ async def create_new_recall(
 async def talked_one_recall(
     id: int,
     form_data: TalkedRecall,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return talked_recall(id, form_data, usr, db)
+        res = talked_recall(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
 
@@ -59,22 +65,30 @@ async def talked_one_recall(
 async def update_one_recall(
     id: int,
     form_data: UpdateRecall,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_recall(id, form_data, usr, db)
+        res = update_recall(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
 
 @recall_router.delete("/recall/{id}/delete", description="This router is able to update recall")
 async def delete_one_recall(
     id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return delete_recall(id, usr, db)
+        res = delete_recall(id, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 

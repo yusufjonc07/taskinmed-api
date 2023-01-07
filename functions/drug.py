@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from models.drug import Drug
 from trlatin import tarjima
 from sqlalchemy import or_
+from . request import insert_req
 
 
 
@@ -62,6 +63,7 @@ def create_drug(form_data, usr, db):
     db.add(new_drug)
 
     db.commit()
+    
     return new_drug.id
 
 
@@ -72,6 +74,7 @@ def update_drug(id, form_data, usr, db):
     if this_drug.first():
         this_drug.update({
             Drug.name: form_data.name,
+            Drug.upt: True,
         })
 
         db.commit()

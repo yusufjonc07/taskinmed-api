@@ -4,7 +4,7 @@ from models.patient import Patient
 from models.user import User
 from sqlalchemy.orm import subqueryload, joinedload
 from sqlalchemy import or_
-
+from . request import insert_req
 
 def get_count_patients(search, usr, db):
 
@@ -78,6 +78,7 @@ def create_patient(form_data, usr, db):
     db.add(new_patient)
     db.flush()
 
+
     return new_patient.id
 
 
@@ -98,6 +99,7 @@ def update_patient(id, form_data, usr, db):
             Patient.source_id: form_data.source_id,
             Patient.phone: form_data.phone,
             Patient.user_id: usr.id,
+            Patient.upt: True,
         })
 
         db.commit()

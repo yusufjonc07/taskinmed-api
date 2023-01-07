@@ -48,6 +48,7 @@ def update_region(id, form_data, usr, db):
     if this_region.first():
         this_region.update({
             Region.name: form_data.name,
+            Region.upt: True
         })
 
         db.commit()

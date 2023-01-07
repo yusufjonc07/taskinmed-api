@@ -84,6 +84,7 @@ def update_user(id, form_data, usr, db):
             User.username: form_data.username,
             User.password_hash: newpaswd,
             User.disabled: form_data.disabled,
+            User.upt: True
         })
 
         db.commit()

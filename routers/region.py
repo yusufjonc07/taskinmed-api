@@ -1,7 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
+from utils import *
 from auth import get_current_active_user
 from settings import UserSchema
 from functions.region import *
@@ -20,6 +17,7 @@ async def get_regions_list(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
+
         return {
             "data": get_all_regions(page, limit, usr, db),
             "count": math.ceil(get_count_regions(usr, db) / limit),
@@ -37,7 +35,10 @@ async def create_new_region(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_region(form_data, usr, db)
+        res = create_region(form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -50,7 +51,10 @@ async def update_one_region(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_region(id, form_data, usr, db)
+        res = update_region(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

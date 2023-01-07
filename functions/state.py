@@ -49,6 +49,7 @@ def update_state(id, form_data, usr, db):
         this_state.update({
             State.name: form_data.name,
             State.region_id: form_data.region_id,
+            State.upt: True
         })
 
         db.commit()

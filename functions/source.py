@@ -47,6 +47,7 @@ def update_source(id, form_data, usr, db):
     if this_source.first():
         this_source.update({
             Source.name: form_data.name,
+            Source.upt: True
         })
 
         db.commit()

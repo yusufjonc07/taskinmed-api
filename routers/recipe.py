@@ -1,10 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.recipe import *
 from models.recipe import *
 from schemas.recipe import *
@@ -51,6 +46,7 @@ async def create_new_recipe(
                     recipe = create_recipe(form_data, diagnosis.id, diagnosis.queue, usr, db)
                 db.commit()
 
+                
                 return "success"    
 
         raise HTTPException(status_code=400, detail="Diagnosis not found!")
@@ -66,7 +62,10 @@ async def update_one_recipe(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_recipe(id, form_data, usr, db)
+        res = update_recipe(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
 
@@ -78,7 +77,10 @@ async def delete_one_recipe(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return delete_recipe(id, usr, db)
+        res = delete_recipe(id, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

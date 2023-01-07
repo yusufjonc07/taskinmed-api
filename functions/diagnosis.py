@@ -5,6 +5,8 @@ from models.queue import Queue
 from models.user import User
 from functions.recipe import create_recipe
 from sqlalchemy.orm import joinedload
+from functions.request import insert_req
+
 
 def get_count_diagnosiss(patient_id, usr, db):
 
@@ -65,6 +67,7 @@ def create_diagnosis(form_data, usr, db):
             create_recipe(one_recipe, new_diagnosis.id, queue,  usr, db)
 
         db.commit()
+
         return 'success'
     else:
         raise HTTPException(status_code=400, detail="Queue was not found!")
@@ -79,6 +82,7 @@ def update_diagnosis(id, form_data, usr, db):
         this_diagnosis.update({
             Diagnosis.illness: form_data.illness,
             Diagnosis.description: form_data.description,
+            Diagnosis.upt: True,
         })
 
         db.commit()

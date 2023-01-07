@@ -14,6 +14,7 @@ from sqlalchemy import or_
 import math
 from trlatin import tarjima
 from datetime import timedelta
+from .request import insert_req
 
 
 def get_count_queues(usr, db):
@@ -152,6 +153,7 @@ def update_queue(id, form_data, usr, db):
             Queue.completed_at: form_data.completed_at,
             Queue.step: form_data.step,
             Queue.user_id: form_data.user_id,
+            Queue.upt: True,
         })
 
         db.commit()
@@ -159,12 +161,12 @@ def update_queue(id, form_data, usr, db):
     else:
         raise HTTPException(status_code=400, detail="Queue was not found!")
 
-def confirm_queue(id, db):
+def confirm_queue(usr, id, db):
 
     this_queue = db.query(Queue).filter_by(id=id, step=2)
 
     if this_queue.first():
-        this_queue.update({Queue.step: 3})
+        this_queue.update({Queue.step: 3, Queue.upt: True,})
         db.commit()
         return 'Success'
     else:
@@ -176,9 +178,8 @@ def confirm_diagnosis(id, db):
     que = this_queue.first()
 
     if que:
-        this_queue.update({Queue.step: 4})
+        this_queue.update({Queue.step: 4, Queue.upt: True,})
         db.commit()
-
 
         next_que = db.query(Queue).filter_by(room=que.room, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()
 
@@ -198,7 +199,7 @@ def complete_diagnosis_finish(id, usr, db):
     theque = this_queue.first()
 
     if theque:
-        this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt})
+        this_queue.update({Queue.step: 5, Queue.completed_at: now_sanavaqt, Queue.upt: True})
 
         setting = db.query(Setting).first()
 
@@ -216,6 +217,7 @@ def complete_diagnosis_finish(id, usr, db):
 
         db.add(new_recall)
         db.commit()
+
 
         return db.query(Queue).options(
             joinedload('doctor') \
@@ -243,7 +245,7 @@ def cancel_queue(id, usr, db):
     if this_queue.first():
         if this_queue.first().step < 4:
             
-            this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id})
+            this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id, Queue.upt: True})
             db.query(Income).filter_by(queue_id=id).delete()
             db.commit()
 

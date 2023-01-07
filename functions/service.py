@@ -51,6 +51,7 @@ def update_service(id, form_data, usr, db):
             Service.name: form_data.name,
             Service.disabled: form_data.disabled,
             Service.user_id: usr.id,
+            Service.upt: True
         })
 
         db.commit()

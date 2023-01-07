@@ -4,6 +4,8 @@ from sqlalchemy.orm import sessionmaker, Session
 from fastapi import Depends
 
 SQLALCHEMY_DATABASE_URL = "mysql+pymysql://admin_dbsync:admin_dbsync@185.196.214.176:3306/admin_dbsync"
+# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Klinika#123@localhost:3306/klinika"
+
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL 

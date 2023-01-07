@@ -1,10 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.report import *
 from typing import Optional
 from models.state import *

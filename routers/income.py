@@ -1,10 +1,5 @@
     
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.income import *
 from models.income import *
 import math
@@ -38,11 +33,16 @@ async def get_incomes_list(
 async def update_one_income(
     id: int,
     queue_id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_income(id, queue_id, usr, db)
+        res = update_income(id, queue_id, usr, db)
+        if res:
+            
+            return res
+            
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

@@ -1,17 +1,11 @@
-    
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.casher import *
 from models.casher import *
 from schemas.casher import *
 import math
 
-casher_router = APIRouter(tags=['Casher Endpoint'])
 
+casher_router = APIRouter(tags=['Casher Endpoint'])
 
 @casher_router.get("/cashers", description="This router returns list of the cashers using pagination")
 async def get_cashers_list(
@@ -38,11 +32,15 @@ async def get_cashers_list(
 @casher_router.post("/casher/create", description="This router is able to add new casher and return casher id")
 async def create_new_casher(
     form_data: NewCasher,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_casher(form_data, usr, db)
+        res = create_casher(form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -51,11 +49,15 @@ async def create_new_casher(
 async def update_one_casher(
     id: int,
     form_data: NewCasher,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return update_casher(id, form_data, usr, db)
+        res = update_casher(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

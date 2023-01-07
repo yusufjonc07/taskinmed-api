@@ -1,4 +1,3 @@
-    
 from fastapi import HTTPException
 from models.income import Income
 from models.patient import Patient
@@ -8,7 +7,6 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import or_, func
 from models.user import User
 from trlatin import tarjima
-
 
 def get_count_incomes(search, from_date, to_date, usr, db):
 
@@ -86,7 +84,7 @@ def create_income(form_data, usr, db):
             
             if new_income.id > 0:
                 
-                upt.update({Queue.step: 3})
+                upt.update({Queue.step: 3, Queue.upt: True})
                 db.commit()
 
                 return db.query(Queue) \
@@ -130,6 +128,7 @@ def update_income(id, queue_id, usr, db):
                     Income.queue_id: queue.id,
                     Income.user_id: usr.id,
                     Income.cashreg_id: casher.cashreg_id,
+                    Income.upt: True,
                 })
 
                 db.commit()

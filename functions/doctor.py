@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from models.doctor import Doctor
 from sqlalchemy.orm import subqueryload
 from models.user import User
+from . request import insert_req
 
 
 
@@ -75,6 +76,7 @@ def create_doctor(form_data, usr, db):
     db.add(new_doctor)
     db.commit()
 
+
     return new_doctor.id
 
 
@@ -89,6 +91,7 @@ def update_doctor(id, form_data, usr, db):
             Doctor.cost: form_data.cost,
             Doctor.user_id: form_data.user_id,
             Doctor.user_id: form_data.user_id,
+            Doctor.upt: True,
         })
 
         db.commit()

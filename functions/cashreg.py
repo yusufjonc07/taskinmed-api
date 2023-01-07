@@ -1,4 +1,3 @@
-    
 from fastapi import HTTPException
 from models.cashreg import Cashreg
 
@@ -46,6 +45,7 @@ def update_cashreg(id, form_data, usr, db):
     if this_cashreg.first():
         this_cashreg.update({
             Cashreg.name: form_data.name,
+            Cashreg.upt: True,
         })
 
         db.commit()

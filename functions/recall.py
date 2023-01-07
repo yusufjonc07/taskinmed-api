@@ -4,6 +4,7 @@ from models.recall import Recall
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 import math
+from . request import insert_req
 
 
 def get_count_recalls(usr, db):
@@ -37,7 +38,6 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
             recalls = recalls.filter(Recall.queue_id > 0)
         else:
             recalls = recalls.filter(Recall.queue_id == 0)
-
 
     recalls = recalls.order_by(Recall.plan_date.asc()).offset(offset).limit(limit)
 
@@ -84,6 +84,7 @@ def talked_recall(id, form_data, usr, db):
             Recall.comment: form_data.comment,
             Recall.talk_type: form_data.talk_type,
             Recall.status: True,
+            Recall.upt: True
         })
 
         db.commit()
@@ -98,6 +99,7 @@ def update_recall(id, form_data, usr, db):
     if this_recall.first():
         this_recall.update({
             Recall.plan_date: form_data.plan_date,
+            Recall.upt: True
         })
 
         db.commit()

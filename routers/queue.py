@@ -1,10 +1,5 @@
 from typing import Optional, List  
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.queue import *
 from functions.income import *
 from models.queue import *
@@ -42,6 +37,7 @@ async def get_queues_unit(
 async def create_new_queue( 
     p_id: int,
     form_datas: List[NewQueue],
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -50,6 +46,7 @@ async def create_new_queue(
     if usr.role in ['admin', 'operator', 'reception']:
         for form_data in form_datas:
             create_queue(form_data, p_id, usr, db)
+        
         return 'success'
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
@@ -58,11 +55,15 @@ async def create_new_queue(
 @queue_router.post("/cashreg/confirm", description="This router is able to add new income and return income id")
 async def create_new_income(
     form_data: NewIncome,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if not usr.role in ['any_role']:
-        return create_income(form_data, usr, db)
+        res = create_income(form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -70,6 +71,7 @@ async def create_new_income(
 @queue_router.post("/queue_toggle_skipped", description="This router is able to add new income and return income id")
 async def toggle_skipped_func(
     id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -80,7 +82,7 @@ async def toggle_skipped_func(
         if queue:
             if queue.step == 2:
 
-                que.update({Queue.step: 3})
+                que.update({Queue.step: 3, Queue.upt: True})
                 db.commit()
 
                 if len(str(queue.room)) == 1:
@@ -109,13 +111,12 @@ async def toggle_skipped_func(
                 })
 
 
-                
-                return "success"
             elif queue.step == 3:
-                que.update({Queue.step: 2})
-                db.commit()
-                return "success"
-
+                que.update({Queue.step: 2, Queue.upt: True})
+                db.commit()            
+            
+            return "sucecss"
+                
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -133,9 +134,9 @@ async def goout_patient_queue(
 
         if next_queue:
 
-            next_que.update({Queue.in_room: False})
+            next_que.update({Queue.in_room: False, Queue.upt: True})
             db.commit()
-
+            
             return "success"
 
 
@@ -143,6 +144,7 @@ async def goout_patient_queue(
 @queue_router.get("/queue/call")
 async def call_patient_queue(
     id: int,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -154,7 +156,7 @@ async def call_patient_queue(
 
         if next_queue:
 
-            next_que.update({Queue.in_room: True})
+            next_que.update({Queue.in_room: True, Queue.upt: True})
             db.commit()
 
             if len(str(next_queue.room)) == 1:
@@ -184,7 +186,7 @@ async def call_patient_queue(
                 })
             except Exception as e:
                 pass 
-
+            
             return 'success'
 
 
@@ -199,6 +201,8 @@ async def confirm_the_diagnonis(
 ):
     if usr.role in ['admin', 'doctor']:
         confirm_diagnosis(queue_id, db)
+
+        
         # if next_que:
         #     await manager.queue({
         #         "room": next_que.room,
@@ -219,7 +223,10 @@ async def complete_queue_finish(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'doctor', 'reception']:
-        return complete_diagnosis_finish(queue_id, usr, db)
+        res = complete_diagnosis_finish(queue_id, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
 
@@ -228,11 +235,15 @@ async def complete_queue_finish(
 async def update_one_queue(
     id: int,
     form_data: NewQueue,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'operator', 'reception']:
-        return update_queue(id, form_data, usr, db)
+        res = update_queue(id, form_data, usr, db)
+        if res:
+            
+            return res
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     
@@ -243,7 +254,11 @@ async def cancel_one_queue(
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'operator', 'reception', 'casher']:
-        return cancel_queue(id, usr, db)
+        res = cancel_queue(id, usr, db)
+        if res:
+            
+            return res
+
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     

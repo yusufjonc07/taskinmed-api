@@ -1,16 +1,12 @@
     
-from fastapi import Depends, APIRouter, HTTPException
-from fastapi import HTTPException
-from db import ActiveSession
-from sqlalchemy.orm import Session
-from auth import get_current_active_user
-from settings import UserSchema
+from utils import *
 from functions.patient import *
 from functions.queue import *
 from models.patient import *
 from schemas.patient import *
 from typing import Optional
 import math
+import inspect
 
 patient_router = APIRouter(tags=['Patient Endpoint'])
 
@@ -23,6 +19,7 @@ async def get_patients_list(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
+
     if not usr.role in ['any_role']:
         return {
             "data": get_all_patients(search, page, limit, usr, db),
@@ -37,6 +34,7 @@ async def get_patients_list(
 @patient_router.post("/patient/create", description="This router is able to add new patient as well as his queue")
 async def create_new_patient(
     form_data: NewPatient,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
@@ -47,7 +45,9 @@ async def create_new_patient(
             for nq in form_data.queue:
                 q_id = create_queue(nq, p_id, usr, db)
 
-        return 'success'
+        
+
+        return "success"
 
     else:
         raise HTTPException(status_code=400, detail="Access denided!")
@@ -57,12 +57,17 @@ async def create_new_patient(
 async def update_one_patient(
     id: int,
     form_data: UpdatePatient,
+    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
 
     if not usr.role in ['any_role']:
-        return update_patient(id, form_data, usr, db)
+        res = update_patient(id, form_data, usr, db)
+        if res:
+            
+            return res
+
     else:
         raise HTTPException(status_code=400, detail="Access denided!")       
     
