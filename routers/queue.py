@@ -139,6 +139,24 @@ async def goout_patient_queue(
             
             return "success"
 
+@queue_router.get("/queue_possibility")
+async def get_patient_queue(
+    room: int,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    if usr.role not in ['any']:
+        next_que = db.query(Queue).filter(
+            Queue.date == now_sanavaqt.strftime("%Y-%m-%d"),
+            Queue.step > 0,
+            Queue.step < 4,
+            Queue.room == room,
+        ).count()
+
+        adding_hours = round(next_que / 8 * 10) / 10
+        about_time = now_sanavaqt+timedelta(hours=adding_hours)
+        return about_time.strftime("%H:%M:%S")
+
 
 
 @queue_router.get("/queue/call")

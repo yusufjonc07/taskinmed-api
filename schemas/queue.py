@@ -10,6 +10,6 @@ class NewQueue(BaseModel):
     doctor_id: int
     service_id: int
     room: int
-    date: str
+    time: str
        
     

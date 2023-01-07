@@ -19,5 +19,5 @@ class User(Base):
     username = Column(String, default='')
     password_hash = Column(String, default='')
     disabled = Column(Boolean, default=False)
-    upt = Column(Boolean, default=True, server_default=True)
+    upt = Column(Boolean, default=True)
     

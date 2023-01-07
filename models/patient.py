@@ -20,7 +20,7 @@ class Patient(Base):
     surename = Column(String, default='')
     fathername = Column(String, default='')
     gender = Column(String, default='erkak')
-    age = Column(Integer, default=0)
+    age = Column(Date)
     address = Column(String, default='')
     state_id = Column(Integer, ForeignKey('state.id'), default=0)
     region_id = Column(Integer, ForeignKey('region.id'), default=0)
@@ -29,7 +29,7 @@ class Patient(Base):
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
-    upt = Column(Boolean, default=True, server_default=True)
+    upt = Column(Boolean, default=True)
 
     state = relationship('State', backref='patients')
     region = relationship('Region', backref='patients')

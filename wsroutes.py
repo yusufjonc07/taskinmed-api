@@ -27,6 +27,7 @@ async def websocket_endpoint(websocket: WebSocket):
 @queue_ws.get("/queues/waiting")
 async def get_queuegroup_list(db:Session = ActiveSession):
 
+
     return db.query(Queue.id, Queue.number, Queue.room).filter_by(
         in_room=False, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
     ).order_by(Queue.number.asc()).all()

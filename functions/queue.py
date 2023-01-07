@@ -104,7 +104,7 @@ def read_queue(id, usr, db):
 def create_queue(form_data, p_id, usr, db):
 
     try:
-        last_queue = db.query(Queue).filter_by(room=form_data.room, date=form_data.date).order_by(Queue.number.desc()).first()
+        last_queue = db.query(Queue).filter_by(room=form_data.room, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.desc()).first()
 
         if last_queue:
             number = last_queue.number + 1
@@ -115,8 +115,8 @@ def create_queue(form_data, p_id, usr, db):
             room=form_data.room,
             doctor_id=form_data.doctor_id,
             service_id=form_data.service_id,
+            time=form_data.time,
             number=number,
-            date=form_data.date,
             patient_id=p_id,
             user_id=usr.id
         )
@@ -149,6 +149,7 @@ def update_queue(id, form_data, usr, db):
         this_queue.update({
             Queue.patient_id: form_data.patient_id,
             Queue.service_id: form_data.service_id,
+            Queue.time: form_data.time,
             Queue.number: form_data.number,
             Queue.completed_at: form_data.completed_at,
             Queue.step: form_data.step,

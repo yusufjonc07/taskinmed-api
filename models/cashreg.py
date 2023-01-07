@@ -12,6 +12,6 @@ class Cashreg(Base):
     __tablename__ = "cashreg"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, unique=True)
-    upt = Column(Boolean, default=True, server_default=True)
+    upt = Column(Boolean, default=True)
        
     

@@ -1,0 +1,2 @@
+1. hamma tablega upt boolean qo`yish
+2. queuedan plan_date delte

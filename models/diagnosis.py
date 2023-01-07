@@ -21,7 +21,7 @@ class Diagnosis(Base):
     patient_id = Column(Integer, ForeignKey('patient.id'), default=0)
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
-    upt = Column(Boolean, default=True, server_default=True)
+    upt = Column(Boolean, default=True)
 
     user = relationship('User', backref='diagnosiss')
     patient = relationship('Patient', backref='diagnosiss')

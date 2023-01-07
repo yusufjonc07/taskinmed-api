@@ -14,7 +14,7 @@ class NewPatient(BaseModel):
     surename: str
     fathername: str
     gender: Gender
-    age: int
+    age: str
     address: str
     state_id: int
     region_id: int
@@ -25,7 +25,7 @@ class NewPatient(BaseModel):
 
 class UpdatePatient(BaseModel):
     name: str
-    age: int
+    age: str
     address: str
     state_id: int
     region_id: int

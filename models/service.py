@@ -15,7 +15,7 @@ class Service(Base):
     name = Column(String, unique=True)
     disabled = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
-    upt = Column(Boolean, default=True, server_default=True)
+    upt = Column(Boolean, default=True)
 
     user = relationship('User', backref='services')       
     
