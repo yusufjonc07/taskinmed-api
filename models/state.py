@@ -14,6 +14,7 @@ class State(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, unique=True)
     region_id = Column(Integer, ForeignKey('region.id'), default=0)
+    upt = Column(Boolean, default=True, server_default=True)
 
     region = relationship('Region', backref='states')       
     

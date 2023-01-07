@@ -16,6 +16,7 @@ class Casher(Base):
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
     cashreg_id = Column(Integer, ForeignKey('cashreg.id'), default=0)
     disabled = Column(Boolean, default=False)
+    upt = Column(Boolean, default=True, server_default=True)
 
     user = relationship('User', backref='cashers')
     cashreg = relationship('Cashreg', backref='cashers')       

@@ -32,6 +32,7 @@ class Recall(Base):
     operator_id = Column(Integer, ForeignKey('user.id'), default=0)
     talk_type = Column(String(10), default="")
     queue_id = Column(Integer, ForeignKey('queue.id'), default=0)
+    upt = Column(Boolean, default=True, server_default=True)
 
 
     patient = relationship('Patient', backref='recalls')

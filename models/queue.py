@@ -29,6 +29,7 @@ class Queue(Base):
     cancel_user_id = Column(Integer, ForeignKey('user.id'), default=0)
     doctor_id = Column(Integer, ForeignKey('doctor.id'), default=0)
     in_room = Column(Boolean, default=False)
+    upt = Column(Boolean, default=True, server_default=True)
 
 
     doctor = relationship('Doctor',  backref='queues')

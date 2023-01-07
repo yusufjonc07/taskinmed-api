@@ -12,5 +12,6 @@ class Region(Base):
     __tablename__ = "region"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String,  unique=True)
+    upt = Column(Boolean, default=True, server_default=True)
        
     

@@ -25,6 +25,7 @@ class Income(Base):
     updated_at = Column(DateTime, default=now_sanavaqt)
     taken = Column(Boolean, default=False)
     method = Column(String, default="naqd")
+    upt = Column(Boolean, default=True, server_default=True)
 
     patient = relationship('Patient', backref='incomes')
     queue = relationship('Queue', backref='incomes')

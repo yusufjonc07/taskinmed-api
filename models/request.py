@@ -13,5 +13,5 @@ class Request(Base):
     url = Column(String, default="none")
     body = Column(LONGTEXT, default="none")
     status = Column(Boolean, default=False)
-       
+    upt = Column(Boolean, default=True, server_default=True)
     

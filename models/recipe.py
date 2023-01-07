@@ -28,6 +28,7 @@ class Recipe(Base):
     method = Column(String, default='tabletka')
     duration = Column(Numeric, default=0)
     unit = Column(Numeric, default=0)
+    upt = Column(Boolean, default=True, server_default=True)
 
     user = relationship('User', backref='recipes')
     drug = relationship('Drug', backref='recipes')

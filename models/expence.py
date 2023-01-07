@@ -19,6 +19,7 @@ class Expence(Base):
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
     created_at = Column(DateTime, default=now_sanavaqt)
     comment = Column(String)
+    upt = Column(Boolean, default=True, server_default=True)
 
     user = relationship('User', backref='expences')
     
