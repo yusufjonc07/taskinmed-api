@@ -1,4 +1,4 @@
-    
+from typing import Optional
 from utils import *
 from functions.drug import *
 from models.drug import *
