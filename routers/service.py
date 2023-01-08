@@ -47,7 +47,7 @@ async def create_new_service(
 @service_router.put("/service/{id}/update", description="This router is able to update service")
 async def update_one_service(
     id: int,
-    form_data: NewService,
+    form_data: UpdateService,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):

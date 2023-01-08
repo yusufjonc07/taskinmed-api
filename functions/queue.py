@@ -147,6 +147,7 @@ def update_queue(id, form_data, usr, db):
     this_queue = db.query(Queue).filter(Queue.id == id)
 
     if this_queue.first():
+        
         this_queue.update({
             Queue.doctor_id: form_data.doctor_id,
             Queue.service_id: form_data.service_id,

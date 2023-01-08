@@ -32,7 +32,7 @@ def create_service(form_data, usr, db):
 
     new_service = Service(
         name=form_data.name,
-        disabled=form_data.disabled,
+        disabled=False,
         user_id=usr.id,
     )
 
