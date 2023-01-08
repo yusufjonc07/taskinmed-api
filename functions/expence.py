@@ -56,7 +56,7 @@ def read_expence(id, usr, db):
     if this_expence:
         return this_expence
     else:
-        raise HTTPException(status_code=400, detail="Expence was not found!")
+        raise HTTPException(status_code=400, detail="Chiqim topilmadi!")
 
 
 def create_expence(form_data, usr, db):
@@ -87,7 +87,7 @@ def update_expence(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Expence was not found!")
+        raise HTTPException(status_code=400, detail="Chiqim topilmadi!")
 
 
 def delete_expence(id, usr, db):
@@ -100,5 +100,5 @@ def delete_expence(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="Expence was not found!")       
+        raise HTTPException(status_code=400, detail="Chiqim topilmadi!")       
     

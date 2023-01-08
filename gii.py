@@ -121,7 +121,7 @@ async def get_home(db: Session = ActiveSession):
         get_of_router = get_of_router + "\n    if not usr.role in ['any_role']:"
         get_of_router = get_of_router + f"\n        return get_all_{table_name}s(page, limit, usr, db)"
         get_of_router = get_of_router + "\n    else:"
-        get_of_router = get_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
+        get_of_router = get_of_router + '\n        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")'
         
         create_of_router = f'\n\n\n@{table_name}_router.post("/{table_name}/create", description="This router is able to add new {table_name} and return {table_name} id")'
         create_of_router = create_of_router + f"\nasync def create_new_{table_name}("
@@ -131,7 +131,7 @@ async def get_home(db: Session = ActiveSession):
         create_of_router = create_of_router + "\n    if not usr.role in ['any_role']:"
         create_of_router = create_of_router + f"\n        return create_{table_name}(req, form_data, usr, db)"
         create_of_router = create_of_router + "\n    else:"
-        create_of_router = create_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
+        create_of_router = create_of_router + '\n        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")'
 
 
         update_of_router = f'\n\n\n@{table_name}_router.put("/{table_name}/'+'{id}'+f'/update", description="This router is able to update {table_name}")'
@@ -143,7 +143,7 @@ async def get_home(db: Session = ActiveSession):
         update_of_router = update_of_router + "\n    if not usr.role in ['any_role']:"
         update_of_router = update_of_router + f"\n        return update_{table_name}(req, id, form_data, usr, db)"
         update_of_router = update_of_router + "\n    else:"
-        update_of_router = update_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
+        update_of_router = update_of_router + '\n        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")'
         # ./ Beginning of ROUTER functions generation part
 
       

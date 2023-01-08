@@ -25,7 +25,7 @@ def read_service(id, usr, db):
     if this_service:
         return this_service
     else:
-        raise HTTPException(status_code=400, detail="Service was not found!")
+        raise HTTPException(status_code=400, detail="Service topilmadi!")
 
 
 def create_service(form_data, usr, db):
@@ -57,7 +57,7 @@ def update_service(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Service was not found!")
+        raise HTTPException(status_code=400, detail="Service topilmadi!")
 
 
 def delete_service(id, usr, db):
@@ -70,5 +70,5 @@ def delete_service(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="Service was not found!")       
+        raise HTTPException(status_code=400, detail="Service topilmadi!")       
     

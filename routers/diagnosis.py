@@ -30,7 +30,7 @@ async def get_diagnosiss_list(
 
         return get_all_diagnosiss(page, patient_id, limit, usr, db)
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @diagnosis_router.post("/diagnosis/create", description="This router is able to add new diagnosis and return diagnosis id")
@@ -46,7 +46,7 @@ async def create_new_diagnosis(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @diagnosis_router.put("/diagnosis/{id}/update", description="This router is able to update diagnosis")
@@ -63,5 +63,5 @@ async def update_one_diagnosis(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

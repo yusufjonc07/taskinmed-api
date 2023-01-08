@@ -25,7 +25,7 @@ async def get_drugs_list(
         }
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @drug_router.post("/drug/create", description="This router is able to add new drug and return drug id")
@@ -41,7 +41,7 @@ async def create_new_drug(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @drug_router.put("/drug/{id}/update", description="This router is able to update drug")
@@ -58,5 +58,5 @@ async def update_one_drug(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

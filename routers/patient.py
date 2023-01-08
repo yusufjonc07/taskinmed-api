@@ -28,7 +28,7 @@ async def get_patients_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @patient_router.post("/patient/exist")
@@ -63,7 +63,7 @@ async def create_new_patient(
         return "success"
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @patient_router.put("/patient/{id}/update", description="This router is able to update patient")
@@ -82,5 +82,5 @@ async def update_one_patient(
             return res
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

@@ -23,7 +23,7 @@ def read_cashreg(id, usr, db):
     if this_cashreg:
         return this_cashreg
     else:
-        raise HTTPException(status_code=400, detail="Cashreg was not found!")
+        raise HTTPException(status_code=400, detail="Kassa topilmadi!")
 
 
 def create_cashreg(form_data, usr, db):
@@ -51,7 +51,7 @@ def update_cashreg(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Cashreg was not found!")
+        raise HTTPException(status_code=400, detail="Kassa topilmadi!")
 
 
 def delete_cashreg(id, usr, db):
@@ -64,5 +64,5 @@ def delete_cashreg(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="Cashreg was not found!")       
+        raise HTTPException(status_code=400, detail="Kassa topilmadi!")       
     

@@ -42,7 +42,7 @@ def read_diagnosis(id, usr, db):
     if this_diagnosis:
         return this_diagnosis
     else:
-        raise HTTPException(status_code=400, detail="Diagnosis was not found!")
+        raise HTTPException(status_code=400, detail="Tashxis topilmadi!")
 
 
 def create_diagnosis(form_data, usr, db):
@@ -70,7 +70,7 @@ def create_diagnosis(form_data, usr, db):
 
         return 'success'
     else:
-        raise HTTPException(status_code=400, detail="Queue was not found!")
+        raise HTTPException(status_code=400, detail="Navbat topilmadi!")
     
 
 
@@ -88,7 +88,7 @@ def update_diagnosis(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Diagnosis was not found!")
+        raise HTTPException(status_code=400, detail="Tashxis topilmadi!")
 
 
 def delete_diagnosis(id, usr, db):
@@ -101,5 +101,5 @@ def delete_diagnosis(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="Diagnosis was not found!")       
+        raise HTTPException(status_code=400, detail="Tashxis topilmadi!")       
     

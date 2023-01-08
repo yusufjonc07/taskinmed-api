@@ -26,7 +26,7 @@ async def get_incomes_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @income_router.put("/income/{id}/update", description="This router is able to update income")
@@ -44,5 +44,5 @@ async def update_one_income(
             return res
             
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

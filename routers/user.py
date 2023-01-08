@@ -45,7 +45,7 @@ async def get_users_list(
 
        
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @user_router.post("/user/create", description="This router is able to add new user and return user id")
@@ -60,7 +60,7 @@ async def create_new_user(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @user_router.put("/user/{id}/update", description="This router is able to update user")
@@ -76,5 +76,5 @@ async def update_one_user(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

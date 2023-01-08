@@ -46,7 +46,7 @@ def read_user(id, usr, db):
     if this_user:
         return this_user
     else:
-        raise HTTPException(status_code=400, detail="User was not found!")
+        raise HTTPException(status_code=400, detail="User topilmadi!")
 
 
 def create_user(form_data, usr, db):
@@ -90,7 +90,7 @@ def update_user(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="User was not found!")
+        raise HTTPException(status_code=400, detail="User topilmadi!")
 
 
 def delete_user(id, usr, db):
@@ -103,5 +103,5 @@ def delete_user(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="User was not found!")       
+        raise HTTPException(status_code=400, detail="User topilmadi!")       
     

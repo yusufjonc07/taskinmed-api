@@ -24,7 +24,7 @@ async def get_services_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @service_router.post("/service/create", description="This router is able to add new service and return service id")
@@ -41,7 +41,7 @@ async def create_new_service(
         
         raise HTTPException(status_code=200, detail="Success!")
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @service_router.put("/service/{id}/update", description="This router is able to update service")
@@ -57,5 +57,5 @@ async def update_one_service(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

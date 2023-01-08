@@ -25,7 +25,7 @@ async def get_cashers_list(
         }
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 
@@ -42,7 +42,7 @@ async def create_new_casher(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @casher_router.put("/casher/{id}/update", description="This router is able to update casher")
@@ -59,5 +59,5 @@ async def update_one_casher(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

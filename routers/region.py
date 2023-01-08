@@ -25,7 +25,7 @@ async def get_regions_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @region_router.post("/region/create", description="This router is able to add new region and return region id")
@@ -40,7 +40,7 @@ async def create_new_region(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @region_router.put("/region/{id}/update", description="This router is able to update region")
@@ -56,5 +56,5 @@ async def update_one_region(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

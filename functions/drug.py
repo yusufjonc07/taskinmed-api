@@ -51,7 +51,7 @@ def read_drug(id, usr, db):
     if this_drug:
         return this_drug
     else:
-        raise HTTPException(status_code=400, detail="Drug was not found!")
+        raise HTTPException(status_code=400, detail="Dori topilmadi!")
 
 
 def create_drug(form_data, usr, db):
@@ -80,7 +80,7 @@ def update_drug(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Drug was not found!")
+        raise HTTPException(status_code=400, detail="Dori topilmadi!")
 
 
 def delete_drug(id, usr, db):
@@ -93,5 +93,5 @@ def delete_drug(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="Drug was not found!")       
+        raise HTTPException(status_code=400, detail="Dori topilmadi!")       
     

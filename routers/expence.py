@@ -27,7 +27,7 @@ async def get_expences_list(
         }
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @expence_router.post("/expence/create", description="This router is able to add new expence and return expence id")
@@ -43,7 +43,7 @@ async def create_new_expence(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @expence_router.put("/expence/{id}/update", description="This router is able to update expence")
@@ -60,5 +60,5 @@ async def update_one_expence(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

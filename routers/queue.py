@@ -49,7 +49,7 @@ async def create_new_queue(
         
         return 'success'
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @queue_router.post("/cashreg/confirm", description="This router is able to add new income and return income id")
@@ -65,7 +65,7 @@ async def create_new_income(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @queue_router.post("/queue_toggle_skipped", description="This router is able to add new income and return income id")
@@ -118,7 +118,7 @@ async def toggle_skipped_func(
             return "sucecss"
                 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 @queue_router.get("/queue/goout")
 async def goout_patient_queue(
@@ -209,7 +209,7 @@ async def call_patient_queue(
 
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 @queue_router.post("/diagnosises/confirm")
 async def confirm_the_diagnonis(
@@ -230,7 +230,7 @@ async def confirm_the_diagnonis(
         #     })
         return 'success'
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 
@@ -246,7 +246,7 @@ async def complete_queue_finish(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @queue_router.put("/queue/{id}/update", description="This router is able to update queue")
@@ -263,7 +263,7 @@ async def update_one_queue(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     
 @queue_router.put("/queue/{id}/cancel", description="This router is able to cancel queue")
 async def cancel_one_queue(
@@ -278,5 +278,5 @@ async def cancel_one_queue(
             return res
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

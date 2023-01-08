@@ -57,7 +57,7 @@ def read_recall(id, usr, db):
     if this_recall:
         return this_recall
     else:
-        raise HTTPException(status_code=400, detail="Recall was not found!")
+        raise HTTPException(status_code=400, detail="Recall topilmadi!")
 
 
 def create_recall(form_data, usr, db):
@@ -90,7 +90,7 @@ def talked_recall(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Recall was not found!")
+        raise HTTPException(status_code=400, detail="Recall topilmadi!")
 
 def update_recall(id, form_data, usr, db):
 
@@ -105,7 +105,7 @@ def update_recall(id, form_data, usr, db):
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Recall was not found!")
+        raise HTTPException(status_code=400, detail="Recall topilmadi!")
 
 
 def delete_recall(id, usr, db):
@@ -118,5 +118,5 @@ def delete_recall(id, usr, db):
         db.commit()
         return 'This item has been deleted!'
     else:
-        raise HTTPException(status_code=400, detail="Recall was not found!")       
+        raise HTTPException(status_code=400, detail="Recall topilmadi!")       
     

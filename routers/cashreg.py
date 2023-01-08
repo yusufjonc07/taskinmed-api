@@ -26,7 +26,7 @@ async def get_cashregs_list(
         }
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @cashreg_router.post("/cashreg/create", description="This router is able to add new cashreg and return cashreg id")
@@ -43,7 +43,7 @@ async def create_new_cashreg(
             return res
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @cashreg_router.put("/cashreg/{id}/update", description="This router is able to update cashreg")
@@ -61,5 +61,5 @@ async def update_one_cashreg(
             return res
             
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     

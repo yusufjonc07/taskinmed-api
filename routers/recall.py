@@ -25,7 +25,7 @@ async def get_recalls_list(
     if not usr.role in ['any_role']:
         return get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limit, usr, db)
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @recall_router.post("/recall/create", description="This router is able to add new recall and return recall id")
@@ -41,7 +41,7 @@ async def create_new_recall(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @recall_router.put("/recall/{id}/talked", description="This router is able to finish recall")
@@ -58,7 +58,7 @@ async def talked_one_recall(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
 
 
 @recall_router.put("/recall/{id}/update", description="This router is able to update recall")
@@ -75,7 +75,7 @@ async def update_one_recall(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
 
 @recall_router.delete("/recall/{id}/delete", description="This router is able to update recall")
 async def delete_one_recall(
@@ -90,7 +90,7 @@ async def delete_one_recall(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @recall_router.get("/count_of_calls")

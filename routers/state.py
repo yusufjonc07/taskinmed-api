@@ -25,7 +25,7 @@ async def get_states_list(
             "limit": limit,
         }
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 
 @state_router.post("/state/create", description="This router is able to add new state and return state id")
@@ -59,5 +59,5 @@ async def update_one_state(
             return res
 
     else:
-        raise HTTPException(status_code=400, detail="Access denided!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
     
