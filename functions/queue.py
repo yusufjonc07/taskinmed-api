@@ -48,6 +48,7 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
 
     if usr.role == 'doctor':
         qs = qs.filter(Queue.doctor.has(user_id=usr.id))
+
     if len(search) > 0:
         qs = qs.filter(
             or_(
@@ -65,7 +66,7 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
     if patient_id > 0:
         qs = qs.filter(Queue.patient_id==patient_id).order_by(Queue.id.desc())
     else:
-        qs = qs.filter(Queue.step==step).order_by(Queue.number.asc())
+        qs = qs.filter(Queue.step==step, Queue.date == now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc())
 
     data = qs.offset(offset).limit(limit)
 
