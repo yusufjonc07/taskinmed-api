@@ -31,6 +31,19 @@ async def get_patients_list(
         raise HTTPException(status_code=400, detail="Access denided!")
 
 
+@patient_router.post("/patient/exist")
+async def check_new_patient(
+    form_data: PhoneUnique,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    patient = db.query(Patient.name, Patient.surename, Patient.fathername).filter_by(phone=form_data.phone).first()
+
+    if patient:
+        return patient
+
+
+
 @patient_router.post("/patient/create", description="This router is able to add new patient as well as his queue")
 async def create_new_patient(
     form_data: NewPatient,
