@@ -37,7 +37,7 @@ async def check_new_patient(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    patient = db.query(Patient.name, Patient.surename, Patient.fathername).filter_by(phone=form_data.phone).first()
+    patient = db.query(Patient.id, Patient.name, Patient.surename, Patient.fathername).filter_by(phone=form_data.phone).first()
 
     if patient:
         return patient
