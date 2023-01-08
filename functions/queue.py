@@ -148,13 +148,11 @@ def update_queue(id, form_data, usr, db):
 
     if this_queue.first():
         this_queue.update({
-            Queue.patient_id: form_data.patient_id,
+            Queue.doctor_id: form_data.doctor_id,
             Queue.service_id: form_data.service_id,
+            Queue.room: form_data.room,
             Queue.time: form_data.time,
-            Queue.number: form_data.number,
-            Queue.completed_at: form_data.completed_at,
-            Queue.step: form_data.step,
-            Queue.user_id: form_data.user_id,
+            Queue.date: form_data.date,
             Queue.upt: True,
         })
 
