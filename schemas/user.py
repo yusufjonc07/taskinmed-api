@@ -13,6 +13,9 @@ class UserRoles(str, Enum):
     doctor='doctor'
     casher='casher'
 
+class QueueTime(BaseModel):
+    minute: int
+
 class NewUser(BaseModel):
     name: str
     role: UserRoles

@@ -1,4 +1,3 @@
-    
 from models.state import * 
 from models.region import * 
 from models.source import * 
@@ -31,8 +30,8 @@ class Patient(Base):
     user_id = Column(Integer, ForeignKey('user.id'), default=0)
     upt = Column(Boolean, default=True)
 
-    state = relationship('State', backref='patients')
-    region = relationship('Region', backref='patients')
+    state = relationship('State', backref='patients', lazy="joined")
+    region = relationship('Region', backref='patients', lazy="joined")
     source = relationship('Source', backref='patients')
     user = relationship('User', backref='patients')       
     

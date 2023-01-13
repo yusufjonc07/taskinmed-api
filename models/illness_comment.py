@@ -1,4 +1,5 @@
     
+from models.illness import * 
 
 from datetime import datetime 
 from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String, DateTime, Time, Text, Boolean 
@@ -8,10 +9,11 @@ from db import Base
 now_sanavaqt = datetime.now() 
 
 
-class Source(Base):
-    __tablename__ = "source"
+class Illness_Comment(Base):
+    __tablename__ = "illness_comment"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String, unique=True)
-    upt = Column(Boolean, default=True)
-       
+    illness_id = Column(Integer, ForeignKey('illness.id'), default=0)
+    comment = Column(String, default='')
+
+    illness = relationship('Illness', backref='illness_comments')       
     

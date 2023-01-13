@@ -56,7 +56,7 @@ def create_casher(form_data, usr, db):
     )
 
     db.add(new_casher)
-    # db.commit()
+    db.commit()
 
     return new_casher.id
 

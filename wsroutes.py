@@ -7,8 +7,9 @@ from models.user import *
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import joinedload
 from functions.queue import get_unpaid_queues
-from sqlalchemy import func
-from starlette.responses import FileResponse
+from sqlalchemy.sql import func
+from datetime import date as now_date
+from sqlalchemy import Date, cast
 
 queue_ws = APIRouter()
 
@@ -27,28 +28,18 @@ async def websocket_endpoint(websocket: WebSocket):
 @queue_ws.get("/queues/waiting")
 async def get_queuegroup_list(db:Session = ActiveSession):
 
-
     return db.query(Queue.id, Queue.number, Queue.room).filter_by(
-        in_room=False, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
-    ).order_by(Queue.number.asc()).all()
+        in_room=False, step=3
+    ).filter(cast(Queue.date,Date) == now_date.today()).order_by(Queue.number.asc()).all()
 
 @queue_ws.get("/queues/inroom")
 async def get_queueinroom_list(db:Session = ActiveSession):
 
     return db.query(Queue.id, Queue.number, Queue.room).filter_by(
-        in_room=True, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")
-    ).order_by(Queue.number.asc()).all()
-
-
-# @queue_ws.get("/getting_file/{file_name}")
-# async def get_image_my(file_name: str):
-
-#     path_to_file = f"sounds/{file_name}"
-    
-#     return FileResponse(path_to_file, media_type='audio/m4a')
-
+        in_room=True, step=3
+    ).filter(cast(Queue.date, Date) == now_date.today()).order_by(Queue.number.asc()).all()
 
 @queue_ws.get("/queues/skipped")
 async def get_queuegroup_skipped(db:Session = ActiveSession):
 
-    return db.query(Queue.id, Queue.number, Queue.room).filter_by(step=2, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.id.asc()).all()
+    return db.query(Queue.id, Queue.number, Queue.room).filter_by(step=2).filter(cast(Queue.date_time,Date) == now_date.today()).order_by(Queue.id.asc()).all()

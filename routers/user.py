@@ -23,6 +23,18 @@ async def update_setting(
     
     return "success"
 
+
+@user_router.put("/minute_update")
+async def update_minute(
+    form_data: QueueTime,
+    db:Session = ActiveSession,
+    usr: UserSchema = Depends(get_current_active_user)
+):
+    db.query(User).filter_by(id=usr.id).update({User.queue_time: form_data.minute, User.upt: True})
+    db.commit()
+    
+    return "success"
+
 @user_router.get("/settings")
 async def get_setting(
     db:Session = ActiveSession,
