@@ -3,8 +3,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from fastapi import Depends
 
-# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://admin_dbsync:admin_dbsync@185.196.214.176:3306/admin_dbsync"
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Klinika#123@localhost:3306/klinika"
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:crudgroup@185.196.214.61:3306/klinika_taskin"
+#SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root:Klinika#123@localhost:3306/klinika"
 
 
 engine = create_engine(
