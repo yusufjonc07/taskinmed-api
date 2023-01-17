@@ -4,6 +4,7 @@ from models.illness_comment import Illness_Comment
 from sqlalchemy import or_
 import math
 from trlatin import tarjima
+from sqlalchemy.orm import joinedload
 
 def get_count_illness_comments(usr, db):
 
@@ -17,7 +18,9 @@ def get_all_illness_comments(illness_id, search, page, limit, usr, db):
     else:
         offset = (page-1) * limit
 
-    qs = db.query(Illness_Comment).filter_by(illness_id=illness_id)
+    qs = db.query(Illness_Comment).options(
+        joinedload("service")
+    ).filter_by(illness_id=illness_id)
        
 
     if len(search) > 0:
@@ -51,7 +54,7 @@ def read_illness_comment(id, usr, db):
 def create_illness_comment(form_data, usr, db):
 
     new_illness_comment = Illness_Comment(
-        illness_id=form_data.illness_id,
+        service_id=form_data.service_id,
         comment=form_data.comment,
     )
 
@@ -67,7 +70,7 @@ def update_illness_comment(id, form_data, usr, db):
 
     if this_illness_comment.first():
         this_illness_comment.update({
-            Illness_Comment.illness_id: form_data.illness_id,
+            Illness_Comment.service_id: form_data.service_id,
             Illness_Comment.comment: form_data.comment,
         })
 

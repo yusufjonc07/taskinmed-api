@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class NewIllness_Comment(BaseModel):
-    illness_id: int
+    service_id: int
     comment: str
        
     
