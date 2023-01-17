@@ -4,6 +4,7 @@ from functions.drug import *
 from models.drug import *
 from schemas.drug import *
 import math
+from fastapi import File
 
 drug_router = APIRouter(tags=['Drug Endpoint'])
 
@@ -58,5 +59,6 @@ async def update_one_drug(
             
             return res
     else:
-        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")       
+        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")      
+
     

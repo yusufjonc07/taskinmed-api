@@ -3,7 +3,7 @@ from auth import auth_router
 from routes import routes
 from gii import gii_router
 from wsroutes import queue_ws
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, File
 
 
 app = FastAPI(
@@ -30,7 +30,6 @@ app.add_middleware(
 async def get():
 
     return 'Kilinika'
-
 
 
 app.include_router(gii_router)
