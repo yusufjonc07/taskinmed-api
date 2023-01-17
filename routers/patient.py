@@ -41,6 +41,8 @@ async def check_new_patient(
 
     if patient:
         return patient
+    else:
+        return ""
 
 
 

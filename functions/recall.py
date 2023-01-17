@@ -5,6 +5,8 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func
 import math
 from . request import insert_req
+from models.deleteds import Deleteds
+from models.doctor import Doctor
 
 
 def get_count_recalls(usr, db):
@@ -21,6 +23,7 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
     recalls = db.query(Recall).options(
         joinedload('patient'),
         joinedload('operator'),
+        joinedload("queue").subqueryload("*"),
     )
 
     recalls = recalls.filter_by(status=completed)
@@ -114,6 +117,12 @@ def delete_recall(id, usr, db):
 
     if this_recall.first():
         this_recall.delete()
+       
+
+        db.add(Deleteds(
+            table='recall',
+            item_id=id
+        ))
 
         db.commit()
         return 'This item has been deleted!'

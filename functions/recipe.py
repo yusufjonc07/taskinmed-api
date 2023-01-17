@@ -1,6 +1,7 @@
     
 from fastapi import HTTPException
 from models.recipe import Recipe
+from models.deleteds import Deleteds
 
 
 def get_count_recipes(usr, db):
@@ -82,7 +83,10 @@ def delete_recipe(id, usr, db):
 
     if this_recipe.first():
         this_recipe.delete()
-
+        db.add(Deleteds(
+            table='recipe',
+            item_id=id
+        ))
         db.commit()
         return 'This item has been deleted!'
     else:

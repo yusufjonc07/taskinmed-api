@@ -13,7 +13,7 @@ from manager import *
 from sqlalchemy import or_
 import math
 from trlatin import tarjima
-from datetime import timedelta
+from datetime import timedelta, datetime
 from .request import insert_req
 
 
@@ -66,7 +66,7 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
     if patient_id > 0:
         qs = qs.filter(Queue.patient_id==patient_id).order_by(Queue.id.desc())
     else:
-        qs = qs.filter(Queue.step==step, Queue.date == now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc())
+        qs = qs.filter(Queue.step==step, Queue.date == datetime.now().strftime("%Y-%m-%d")).order_by(Queue.number.asc())
 
     data = qs.offset(offset).limit(limit)
 
@@ -105,21 +105,19 @@ def read_queue(id, usr, db):
 def create_queue(form_data, p_id, usr, db):
 
     try:
-        last_queue = db.query(Queue).filter_by(room=form_data.room, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.desc()).first()
-
-        if last_queue:
-            number = last_queue.number + 1
-        else:
-            number = 1
 
         new_queue = Queue(
             room=form_data.room,
             doctor_id=form_data.doctor_id,
             service_id=form_data.service_id,
             time=form_data.time,
-            number=number,
+            date=form_data.date,
+            complaint=form_data.complaint,
+            responsible=form_data.responsible,
+            treatment=form_data.treatment,
             patient_id=p_id,
-            user_id=usr.id
+            user_id=usr.id,
+            number=form_data.number
         )
 
         db.add(new_queue)
@@ -147,12 +145,16 @@ def update_queue(id, form_data, usr, db):
     this_queue = db.query(Queue).filter(Queue.id == id)
 
     if this_queue.first():
-        
+
         this_queue.update({
             Queue.doctor_id: form_data.doctor_id,
             Queue.service_id: form_data.service_id,
             Queue.room: form_data.room,
             Queue.time: form_data.time,
+            Queue.number: form_data.number,
+            Queue.complaint:form_data.complaint,
+            Queue.responsible:form_data.responsible,
+            Queue.treatment:form_data.treatment,
             Queue.date: form_data.date,
             Queue.upt: True,
         })
@@ -167,11 +169,12 @@ def confirm_queue(usr, id, db):
     this_queue = db.query(Queue).filter_by(id=id, step=2)
 
     if this_queue.first():
+
         this_queue.update({Queue.step: 3, Queue.upt: True,})
         db.commit()
         return 'Success'
     else:
-        raise HTTPException(status_code=400, detail="Queue topilmadi!")
+        raise HTTPException(status_code=400, detail="Navbat topilmadi!")
 
 def confirm_diagnosis(id, db):
 
@@ -219,8 +222,21 @@ def complete_diagnosis_finish(id, usr, db):
         db.add(new_recall)
         db.commit()
 
+        next_queues = db.query(Queue).filter_by(patient_id=theque.patient_id, step=1).options(
+            joinedload('doctor') \
+            .subqueryload(Doctor.user) \
+                .load_only(
+                User.name,
+                User.phone,
+            ),
+            joinedload('patient').subqueryload("*"),
+            joinedload('service'),
+        ).all()
 
-        return db.query(Queue).options(
+
+        return {
+            "next_queues": next_queues,
+            "queue": db.query(Queue).options(
             joinedload('doctor') \
             .subqueryload('user') \
                 .load_only(
@@ -233,6 +249,7 @@ def complete_diagnosis_finish(id, usr, db):
             .subqueryload('recipes') \
             .subqueryload('drug'),
         ).filter_by(id=id).first()
+        } 
 
     else:
         raise HTTPException(status_code=400, detail="Queue topilmadi!")
@@ -245,9 +262,10 @@ def cancel_queue(id, usr, db):
 
     if this_queue.first():
         if this_queue.first().step < 4:
-            
+
             this_queue.update({Queue.step: 0, Queue.cancel_user_id: usr.id, Queue.upt: True})
             db.query(Income).filter_by(queue_id=id).delete()
+
             db.commit()
 
             return 'success'
@@ -256,4 +274,3 @@ def cancel_queue(id, usr, db):
         raise HTTPException(status_code=400, detail="Queue topilmadi!")
 
 
-    

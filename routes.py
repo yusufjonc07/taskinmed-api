@@ -18,6 +18,9 @@ from routers.report import report_router
 from routers.expence import expence_router
 from routers.recipe import recipe_router
 from routers.recall import recall_router
+from routers.illness import illness_router
+from routers.illness_comment import illness_comment_router
+
 
 ActiveUser = Depends(get_current_active_user)
 routes = APIRouter(dependencies=[ActiveUser])
@@ -39,4 +42,6 @@ routes.include_router(service_router)
 routes.include_router(state_router)
 routes.include_router(user_router)
 routes.include_router(drug_router)       
-routes.include_router(doctor_router)       
+routes.include_router(doctor_router)  
+routes.include_router(illness_router)       
+routes.include_router(illness_comment_router)       

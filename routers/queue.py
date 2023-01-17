@@ -6,6 +6,9 @@ from models.queue import *
 from schemas.queue import *
 from schemas.income import *
 from manager import *
+from datetime import date as now_date
+from datetime import time
+from sqlalchemy import Date, cast
 
 queue_router = APIRouter(tags=['Queue Endpoint'])
 
@@ -43,7 +46,7 @@ async def create_new_queue(
 ):
 
 
-    if usr.role in ['admin', 'operator', 'reception']:
+    if usr.role in ['admin', 'operator', 'reception', 'doctor']:
         for form_data in form_datas:
             create_queue(form_data, p_id, usr, db)
         
@@ -141,40 +144,90 @@ async def goout_patient_queue(
 
 @queue_router.get("/queue_possibility")
 async def get_patient_queue(
+    date: str,
     room: int,
+    user_id:int,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role not in ['any']:
-        next_que = db.query(Queue).filter(
-            Queue.date == now_sanavaqt.strftime("%Y-%m-%d"),
-            Queue.step > 0,
-            Queue.step < 4,
-            Queue.room == room,
-        ).count()
 
-        adding_hours = round(next_que / 8 * 10) / 10
-        about_time = now_sanavaqt+timedelta(hours=adding_hours)
-        return about_time.strftime("%H:%M:%S")
+        user = db.query(User).filter_by(id=user_id).first()
 
+        if user:
+
+            if user.queue_time > 0:
+                for_one_patient_min = user.queue_time
+            else:
+                for_one_patient_min = 8
+
+            work_hour = 12
+            now = datetime.now()
+            from_time = now.replace(hour=8, minute=0, second=0, microsecond=0)
+            to_time = now.replace(hour=20, minute=0, second=0, microsecond=0)
+
+            number_of_queues = math.ceil(work_hour * 60 / for_one_patient_min)
+
+            res = []
+
+            for num in range(1, number_of_queues+1):
+
+                next_que = db.query(Queue).filter(
+                    Queue.date == date,
+                    Queue.step > 0,
+                    Queue.step < 4,
+                    Queue.room == room,
+                    Queue.time >= from_time.strftime("%H:%M:%S"),
+                    Queue.time < (from_time + timedelta(minutes=8)).strftime("%H:%M:%S"),
+                ).order_by(Queue.id.desc()).first()
+
+                if next_que:
+                    poss = False
+                else:
+                    poss = True
+
+
+                if date == now.strftime("%Y-%m-%d"):
+                    if from_time.strftime("%H:%M") < now.strftime("%H:%M"):
+                        poss = False
+
+
+                res.append({
+                    "queue_number": num,
+                    "time": from_time.strftime("%H:%M"),
+                    "possible": poss
+                })
+
+                from_time += timedelta(minutes=for_one_patient_min)
+
+            return res
+
+
+
+
+
+
+       
 
 
 @queue_router.get("/queue/call")
 async def call_patient_queue(
-    id: int,
+    room: int,
     req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['doctor']:
 
-        next_que = db.query(Queue).filter_by(id=id, step=3)
+        next_queue = db.query(Queue).filter_by(room=room, step=3).filter(cast(Queue.date,Date) == now_date.today())
 
-        next_queue = next_que.first()
+        count_of_inrooms = next_queue.filter(Queue.in_room == True).count()
 
-        if next_queue:
+        next_queue = next_queue.filter(Queue.in_room == False).order_by(Queue.number.asc()).first()
 
-            next_que.update({Queue.in_room: True, Queue.upt: True})
+        if next_queue and count_of_inrooms < 10:
+
+            db.query(Queue).filter_by(id=next_queue.id).update({Queue.in_room: True, Queue.upt: True})
             db.commit()
 
             if len(str(next_queue.room)) == 1:

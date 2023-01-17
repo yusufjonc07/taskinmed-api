@@ -9,6 +9,7 @@ from db import get_db, ActiveSession
 from models.user import User
 from settings import *
 import random
+from sqlalchemy.orm import joinedload
 from models.queue import Queue, now_sanavaqt
 
 SECRET_KEY = "09dwkew65094faa6ca2556c818166b7a9563befffcf7099f6f0f4caa6cf63b88e8d3e7"
@@ -95,13 +96,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 
 async def get_current_active_user(current_user: UserSchema = Depends(get_current_user)):
     if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Bo`shatilgan hodim")
+        raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 @auth_router.get("/me")
-async def get_me(usr: UserSchema = Depends(get_current_active_user)):
-    return usr
-
+async def get_me(usr: UserSchema = Depends(get_current_active_user), db: Session = Depends(get_db)):
+    user = db.query(User).options(joinedload('doctors').subqueryload('service')).filter_by(id=usr.id).first()
+    return user
 
 
 @auth_router.get("/queue_number", tags=['Queue Endpoint'])

@@ -16,7 +16,7 @@ async def get_home(db: Session = ActiveSession):
     route_bind_content = route_bind_content + f"\nfrom fastapi import APIRouter, Depends"
     route_bind_content = route_bind_content + f"\nfrom auth import get_current_active_user"
     
-    table_names = ['recall']
+    table_names = ['illness', 'illness_comment']
 
     for table_name in table_names:
         route_bind_content = route_bind_content + f"\nfrom routers.{table_name} import {table_name}_router"
@@ -121,7 +121,7 @@ async def get_home(db: Session = ActiveSession):
         get_of_router = get_of_router + "\n    if not usr.role in ['any_role']:"
         get_of_router = get_of_router + f"\n        return get_all_{table_name}s(page, limit, usr, db)"
         get_of_router = get_of_router + "\n    else:"
-        get_of_router = get_of_router + '\n        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")'
+        get_of_router = get_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
         
         create_of_router = f'\n\n\n@{table_name}_router.post("/{table_name}/create", description="This router is able to add new {table_name} and return {table_name} id")'
         create_of_router = create_of_router + f"\nasync def create_new_{table_name}("
@@ -131,7 +131,7 @@ async def get_home(db: Session = ActiveSession):
         create_of_router = create_of_router + "\n    if not usr.role in ['any_role']:"
         create_of_router = create_of_router + f"\n        return create_{table_name}(req, form_data, usr, db)"
         create_of_router = create_of_router + "\n    else:"
-        create_of_router = create_of_router + '\n        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")'
+        create_of_router = create_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
 
 
         update_of_router = f'\n\n\n@{table_name}_router.put("/{table_name}/'+'{id}'+f'/update", description="This router is able to update {table_name}")'
@@ -143,14 +143,14 @@ async def get_home(db: Session = ActiveSession):
         update_of_router = update_of_router + "\n    if not usr.role in ['any_role']:"
         update_of_router = update_of_router + f"\n        return update_{table_name}(req, id, form_data, usr, db)"
         update_of_router = update_of_router + "\n    else:"
-        update_of_router = update_of_router + '\n        raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")'
+        update_of_router = update_of_router + '\n        raise HTTPException(status_code=400, detail="Access denided!")'
         # ./ Beginning of ROUTER functions generation part
 
       
         relates = ''
         relates_sources = f"\n"
 
-        for column in inspector.get_columns(table_name, schema='admin_dbsync'):
+        for column in inspector.get_columns(table_name, schema='klinika'):
 
             
 
@@ -243,6 +243,7 @@ async def get_home(db: Session = ActiveSession):
         router_content = router_content + update_of_router
 
         route_bind_content = route_bind_content + f"\nroutes.include_router({table_name}_router)"
+        
 
 
     #     with open(f'./models/{table_name}.py', 'w') as f:
@@ -250,20 +251,20 @@ async def get_home(db: Session = ActiveSession):
     # {model_content}       
     # ''')
 
-        with open(f'./functions/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {crud_content}       
-    ''')
+    #     with open(f'./functions/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {crud_content}       
+    # ''')
 
-        with open(f'./schemas/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {schema_content}       
-    ''')
+    #     with open(f'./schemas/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {schema_content}       
+    # ''')
 
-        with open(f'./routers/{table_name}.py', 'w') as f:
-            f.write(f'''\
-    {router_content}       
-    ''')
+    #     with open(f'./routers/{table_name}.py', 'w') as f:
+    #         f.write(f'''\
+    # {router_content}       
+    # ''')
 
 #     with open(f'./routes.py', 'w') as f:
 #         f.write(f'''\

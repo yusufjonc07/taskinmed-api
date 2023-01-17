@@ -14,6 +14,7 @@ class User(Base):
     name = Column(String, default='')
     role = Column(String, default='')
     phone = Column(Integer, unique=True)
+    queue_time = Column(Integer, default=0)
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
     username = Column(String, default='')

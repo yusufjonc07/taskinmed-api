@@ -22,7 +22,6 @@ class Queue(Base):
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
     completed_at = Column(DateTime, default=now_sanavaqt)
-    date = Column(Date, default=now_sanavaqt)
     time = Column(Time, default=now_sanavaqt)
     step = Column(Integer, default=1)
     room = Column(Integer, default=0)
@@ -31,6 +30,10 @@ class Queue(Base):
     doctor_id = Column(Integer, ForeignKey('doctor.id'), default=0)
     in_room = Column(Boolean, default=False)
     upt = Column(Boolean, default=True)
+    date = Column(Date, default=now_sanavaqt)
+    complaint = Column(String, default="")
+    responsible = Column(String, default="")
+    treatment = Column(String, default="")
 
 
     doctor = relationship('Doctor',  backref='queues')
