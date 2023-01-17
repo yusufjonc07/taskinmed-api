@@ -34,6 +34,7 @@ class Queue(Base):
     complaint = Column(String, default="")
     responsible = Column(String, default="")
     treatment = Column(String, default="")
+    next_date = Column(Date, nullable=True)
 
 
     doctor = relationship('Doctor',  backref='queues')

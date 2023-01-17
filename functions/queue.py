@@ -176,13 +176,18 @@ def confirm_queue(usr, id, db):
     else:
         raise HTTPException(status_code=400, detail="Navbat topilmadi!")
 
-def confirm_diagnosis(id, db):
+def confirm_diagnosis(form_data, db):
 
     this_queue = db.query(Queue).filter_by(id=id, step=3)
     que = this_queue.first()
 
     if que:
-        this_queue.update({Queue.step: 4, Queue.upt: True,})
+
+        if form_data.next_date != 'none':
+            this_queue.update({Queue.complaint: form_data.next_date})
+
+        this_queue.update({Queue.complaint: form_data.complaint, Queue.step: 4, Queue.upt: True})
+       
         db.commit()
 
         next_que = db.query(Queue).filter_by(room=que.room, step=3, date=now_sanavaqt.strftime("%Y-%m-%d")).order_by(Queue.number.asc()).first()

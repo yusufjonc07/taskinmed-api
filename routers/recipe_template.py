@@ -37,7 +37,7 @@ async def get_recipe_templates_list(
         else:
             offset = (page-1) * limit
 
-        illness = db.query(Illness).filter_by(illness_id=illness_id)
+        illness = db.query(Illness).filter_by(id=illness_id)
 
         if not illness:
             raise HTTPException(status_code=400, detail="Tashxis topilmadi")

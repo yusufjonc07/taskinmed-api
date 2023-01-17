@@ -264,14 +264,18 @@ async def call_patient_queue(
     else:
         raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
+class Confirming(BaseModel):
+    complaint: str
+    next_date: Optional[str] = 'none'
+
 @queue_router.post("/diagnosises/confirm")
 async def confirm_the_diagnonis(
-    queue_id: int,
+    form_data: Confirming,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
     if usr.role in ['admin', 'doctor']:
-        confirm_diagnosis(queue_id, db)
+        confirm_diagnosis(form_data, db)
 
         
         # if next_que:
