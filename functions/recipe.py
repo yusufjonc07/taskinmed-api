@@ -32,13 +32,7 @@ def read_recipe(id, usr, db):
 def create_recipe(form_data, dg_id, queue, usr, db):
 
     new_recipe = Recipe(
-        drug_id=form_data.drug_id,
-        day=form_data.day,
-        time=form_data.time,
-        meal=form_data.meal,
-        method=form_data.method,
-        duration=form_data.duration,
-        unit=form_data.unit,
+        comment=form_data.comment,
         diagnosis_id=dg_id,
         queue_id=queue.id,
         patient_id=queue.patient_id,
@@ -59,16 +53,11 @@ def update_recipe(id, form_data, usr, db):
     if this_recipe.first():
         this_recipe.update({
             Recipe.user_id: form_data.user_id,
-            Recipe.day: form_data.day,
-            Recipe.time: form_data.time,
             Recipe.drug_id: form_data.drug_id,
             Recipe.patient_id: form_data.patient_id,
             Recipe.queue_id: form_data.queue_id,
             Recipe.diagnosis_id: form_data.diagnosis_id,
-            Recipe.meal: form_data.meal,
-            Recipe.method: form_data.method,
-            Recipe.duration: form_data.duration,
-            Recipe.unit: form_data.unit,
+            Recipe.comment: form_data.comment,
         })
 
         db.commit()

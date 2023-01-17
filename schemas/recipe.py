@@ -12,11 +12,6 @@ class Methods(str, Enum):
 
 class NewRecipe(BaseModel):
     drug_id: int
-    day: int
-    time: int
-    meal: int
-    method: Methods
-    duration: float
-    unit: float = 1
+    unit: str
        
     
