@@ -27,7 +27,6 @@ async def get_diagnosiss_list(
             "limit": limit,
         }
 
-
         return get_all_diagnosiss(page, patient_id, limit, usr, db)
     else:
         raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
@@ -39,10 +38,10 @@ async def create_new_diagnosis(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
+    
     if not usr.role in ['any_role']:
         res = create_diagnosis(form_data, usr, db)
         if res:
-            
             return res
     else:
         raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")

@@ -33,6 +33,7 @@ def create_recipe(form_data, dg_id, queue, usr, db):
 
     new_recipe = Recipe(
         comment=form_data.unit,
+        drug_id=form_data.drug_id,
         diagnosis_id=dg_id,
         queue_id=queue.id,
         patient_id=queue.patient_id,
