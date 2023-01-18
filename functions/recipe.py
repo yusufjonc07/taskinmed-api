@@ -40,7 +40,6 @@ def create_recipe(form_data, dg_id, queue, usr, db):
         user_id=usr.id,
     )
     
-
     db.add(new_recipe)
 
     db.flush()
