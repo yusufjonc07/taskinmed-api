@@ -265,7 +265,7 @@ async def call_patient_queue(
         raise HTTPException(status_code=400, detail="Sizga ruxsat berilmagan!")
 
 class Confirming(BaseModel):
-    complaint: str
+    queue_id: int
     next_date: Optional[str] = 'none'
 
 @queue_router.post("/diagnosises/confirm")

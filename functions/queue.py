@@ -178,7 +178,7 @@ def confirm_queue(usr, id, db):
 
 def confirm_diagnosis(form_data, db):
 
-    this_queue = db.query(Queue).filter_by(id=id, step=3)
+    this_queue = db.query(Queue).filter_by(id=form_data.queue_id, step=3)
     que = this_queue.first()
 
     if que:
@@ -186,7 +186,7 @@ def confirm_diagnosis(form_data, db):
         if form_data.next_date != 'none':
             this_queue.update({Queue.complaint: form_data.next_date})
 
-        this_queue.update({Queue.complaint: form_data.complaint, Queue.step: 4, Queue.upt: True})
+        this_queue.update({Queue.step: 4, Queue.upt: True})
        
         db.commit()
 
