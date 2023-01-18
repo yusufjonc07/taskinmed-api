@@ -36,7 +36,6 @@ async def get_diagnosiss_list(
 @diagnosis_router.post("/diagnosis/create", description="This router is able to add new diagnosis and return diagnosis id")
 async def create_new_diagnosis(
     form_data: NewDiagnosis,
-    req: Request,
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
