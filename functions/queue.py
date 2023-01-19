@@ -184,7 +184,7 @@ def confirm_diagnosis(form_data, db):
     if que:
 
         if form_data.next_date != 'none':
-            this_queue.update({Queue.complaint: form_data.next_date})
+            this_queue.update({Queue.next_date: form_data.next_date})
 
         this_queue.update({Queue.step: 4, Queue.upt: True})
        

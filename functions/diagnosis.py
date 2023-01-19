@@ -63,6 +63,10 @@ def create_diagnosis(form_data, usr, db):
         db.add(new_diagnosis)
         db.flush()
 
+        db.query(Queue).filter_by(id=form_data.queue_id).update({
+            Queue.complaint: form_data.description
+        })
+
         for one_recipe in form_data.recipes:
             create_recipe(one_recipe, new_diagnosis.id, queue,  usr, db)
 
