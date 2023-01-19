@@ -38,7 +38,6 @@ async def create_new_diagnosis(
     db:Session = ActiveSession,
     usr: UserSchema = Depends(get_current_active_user)
 ):
-    
     if not usr.role in ['any_role']:
         res = create_diagnosis(form_data, usr, db)
         if res:

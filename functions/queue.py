@@ -250,9 +250,8 @@ def complete_diagnosis_finish(id, usr, db):
             ),
             joinedload('patient').subqueryload("*"),
             joinedload('service'),
-            joinedload('diagnosiss') \
-            .subqueryload('recipes') \
-            .subqueryload('drug'),
+            joinedload('diagnosiss'),
+            joinedload('recipes'),
         ).filter_by(id=id).first()
         } 
 
