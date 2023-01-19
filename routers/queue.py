@@ -230,35 +230,16 @@ async def call_patient_queue(
             db.query(Queue).filter_by(id=next_queue.id).update({Queue.in_room: True, Queue.upt: True})
             db.commit()
 
-            if len(str(next_queue.room)) == 1:
-                room_path = f"Ovoz 00{next_queue.room}.wav"
-            elif len(str(next_queue.room)) == 2:
-                room_path = f"Ovoz 0{next_queue.room}.wav"
-            else:
-                room_path = "none"
-
-            if len(str(next_queue.number)) == 1:
-                pat_path = f"Ovoz 00{next_queue.number}.wav"
-            elif len(str(next_queue.number)) == 2:
-                pat_path = f"Ovoz 0{next_queue.number}.wav"
-            else:
-                pat_path = "none"
-
             try:
                 await manager.queue({
                     "room": next_queue.room,
                     "number": next_queue.number,
-                    "patient": next_queue.patient.surename + " " + next_queue.patient.name,
-                    "service": next_queue.service.name,
-                    "track1": pat_path,
-                    "track2": "queue.wav",
-                    "track3": room_path,
-                    "track4": "enter_room.wav"
                 })
+                return 'success'
             except Exception as e:
-                pass 
+                return 'jonatilmadi' 
             
-            return 'success'
+            
 
 
     else:
