@@ -2,6 +2,7 @@
 from fastapi import HTTPException
 from models.diagnosis import Diagnosis
 from models.queue import Queue
+from models.recipe import Recipe
 from models.user import User
 from functions.recipe import create_recipe
 from sqlalchemy.orm import joinedload
@@ -23,7 +24,7 @@ def get_all_diagnosiss(page, patient_id, limit, usr, db):
     dgs = db.query(Diagnosis).options(
         joinedload(Diagnosis.patient),
         joinedload(Diagnosis.user).load_only(User.name, User.phone),
-        joinedload(Diagnosis.recipes).subqueryload('drug'),
+        joinedload(Diagnosis.recipes).subqueryload(Recipe.drug),
     )
 
     if patient_id > 0:

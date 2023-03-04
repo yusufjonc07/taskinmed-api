@@ -37,7 +37,7 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
         .join(Queue.doctor) \
         .join(Doctor.user) \
         .options(
-            joinedload(Queue.doctor).subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload(Doctor.user).load_only(
                 User.name,
                 User.phone,
             ),
@@ -131,7 +131,7 @@ def create_queue(form_data, p_id, usr, db):
 
 def get_unpaid_queues(db):
     return db.query(Queue).options(
-            joinedload(Queue.doctor).subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload(Doctor.user).load_only(
                 User.name,
                 User.phone,
             ),

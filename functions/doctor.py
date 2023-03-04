@@ -39,12 +39,12 @@ def get_all_doctors(user_id, service_id, page, limit, usr, db):
         doctors = doctors.filter_by(service_id=service_id)
 
     doctors = doctors.options(
-        subqueryload('user').load_only(
+        subqueryload(Doctor.user).load_only(
             User.name,
             User.disabled,
             User.phone,
         ),
-        subqueryload('service')
+        subqueryload(Doctor.service)
     ).order_by(Doctor.id.desc()).offset(offset).limit(limit).all()
 
 
