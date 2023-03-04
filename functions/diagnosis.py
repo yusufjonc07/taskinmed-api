@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from models.diagnosis import Diagnosis
 from models.queue import Queue
-from models.recipe
+from models.recipe import Recipe
 from models.user import User
 from functions.recipe import create_recipe
 from sqlalchemy.orm import joinedload
