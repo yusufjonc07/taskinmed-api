@@ -3,6 +3,7 @@ from models.income import Income
 from models.patient import Patient
 from models.queue import Queue
 from models.casher import Casher
+from models.doctor import Doctor
 from sqlalchemy.orm import joinedload
 from sqlalchemy import or_, func
 from models.user import User
@@ -46,7 +47,7 @@ def get_all_incomes(search, from_date, to_date, page, limit, usr, db):
     return incomes.filter(
             func.date(Income.created_at) >= from_date,
             func.date(Income.created_at) <= to_date,
-        ).options(joinedload('patient'), joinedload('queue').subqueryload('service')).order_by(Income.created_at.desc()).offset(offset).limit(limit).all()
+        ).options(joinedload(Income.patient), joinedload(Income.queue).subqueryload(Queue.service)).order_by(Income.created_at.desc()).offset(offset).limit(limit).all()
 
 
 def read_income(id, usr, db):
@@ -90,10 +91,10 @@ def create_income(form_data, usr, db):
                 return db.query(Queue) \
                     .filter_by(id=form_data.queue_id, step=3) \
                         .options(
-                            joinedload('incomes'),
-                            joinedload('patient'),
-                            joinedload('service'),
-                            joinedload('doctor').subqueryload('user').load_only(
+                            joinedload(Queue.incomes),
+                            joinedload(Queue.patient),
+                            joinedload(Queue.service),
+                            joinedload(Queue.doctor).subqueryload(Doctor.user).load_only(
                                 User.name,
                                 User.phone,
                             ),

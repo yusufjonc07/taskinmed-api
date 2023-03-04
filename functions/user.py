@@ -5,6 +5,8 @@ from auth import get_password_hash
 from sqlalchemy.orm import joinedload
 from sqlalchemy import or_
 import math
+from models.casher import Casher
+from models.doctor import Doctor
 
 
 def get_count_users(usr, db):
@@ -20,8 +22,8 @@ def get_all_users(search, page, limit, usr, db):
         offset = (page-1) * limit
 
     users = db.query(User).options(
-        joinedload('doctors').subqueryload('service'),
-        joinedload('cashers').subqueryload('cashreg'),
+        joinedload(User.doctors).subqueryload(Doctor.service),
+        joinedload(User.cashers).subqueryload(Casher.cashreg),
     )
 
     if len(search) > 0:

@@ -21,9 +21,9 @@ def get_all_diagnosiss(page, patient_id, limit, usr, db):
         offset = (page-1) * limit
 
     dgs = db.query(Diagnosis).options(
-        joinedload('patient'),
-        joinedload('user').load_only(User.name, User.phone),
-        joinedload('recipes').subqueryload('drug'),
+        joinedload(Diagnosis.patient),
+        joinedload(Diagnosis.user).load_only(User.name, User.phone),
+        joinedload(Diagnosis.recipes).subqueryload('drug'),
     )
 
     if patient_id > 0:

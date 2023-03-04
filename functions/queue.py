@@ -7,7 +7,9 @@ from models.user import User
 from models.doctor import Doctor
 from models.setting import Setting
 from models.income import Income
+from models.diagnosis import Diagnosis
 from models.recall import Recall
+from models.recipe import Recipe
 from models.patient import Patient, now_sanavaqt
 from manager import *
 from sqlalchemy import or_
@@ -35,15 +37,15 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
         .join(Queue.doctor) \
         .join(Doctor.user) \
         .options(
-            joinedload('doctor').subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload('user').load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient'),
-            joinedload('service'),
-            joinedload('diagnosiss') \
-            .subqueryload('recipes') \
-            .subqueryload('drug'),
+            joinedload(Queue.patient),
+            joinedload(Queue.service),
+            joinedload(Queue.diagnosiss) \
+            .subqueryload(Diagnosis.recipes) \
+            .subqueryload(Recipe.drug),
         )
 
     if usr.role == 'doctor':
@@ -85,15 +87,15 @@ def read_queue(id, usr, db):
         .join(Queue.doctor) \
         .join(Doctor.user) \
         .options(
-            joinedload('doctor').subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload(Doctor.user).load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient'),
-            joinedload('service'),
-            joinedload('diagnosiss') \
-            .subqueryload('recipes') \
-            .subqueryload('drug'),
+            joinedload(Queue.patient),
+            joinedload(Queue.service),
+            joinedload(Queue.diagnosiss) \
+            .subqueryload(Diagnosis.recipes) \
+            .subqueryload(Recipe.drug),
         ).filter(Queue.id == id).first()
 
     if this_queue:
@@ -129,15 +131,15 @@ def create_queue(form_data, p_id, usr, db):
 
 def get_unpaid_queues(db):
     return db.query(Queue).options(
-            joinedload('doctor').subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload('user').load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient'),
-            joinedload('service'),
-            joinedload('diagnosiss') \
-            .subqueryload('recipes') \
-            .subqueryload('drug'),
+            joinedload(Queue.patient),
+            joinedload(Queue.service),
+            joinedload(Queue.diagnosiss) \
+            .subqueryload(Diagnosis.recipes) \
+            .subqueryload(Recipe.drug),
         ).filter_by(step=1).order_by(Queue.id.desc()).all()
 
 def update_queue(id, form_data, usr, db):
@@ -228,30 +230,30 @@ def complete_diagnosis_finish(id, usr, db):
         db.commit()
 
         next_queues = db.query(Queue).filter_by(patient_id=theque.patient_id, step=1).options(
-            joinedload('doctor') \
+            joinedload(Queue.doctor) \
             .subqueryload(Doctor.user) \
                 .load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient').subqueryload("*"),
-            joinedload('service'),
+            joinedload(Queue.patient).subqueryload("*"),
+            joinedload(Queue.service),
         ).all()
 
 
         return {
             "next_queues": next_queues,
             "queue": db.query(Queue).options(
-            joinedload('doctor') \
-            .subqueryload('user') \
+            joinedload(Queue.doctor) \
+            .subqueryload(Doctor.user) \
                 .load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient').subqueryload("*"),
-            joinedload('service'),
-            joinedload('diagnosiss'),
-            joinedload('recipes').subqueryload("drug"),
+            joinedload(Queue.patient).subqueryload("*"),
+            joinedload(Queue.service),
+            joinedload(Queue.diagnosiss),
+            joinedload(Queue.recipes).subqueryload(Recipe.drug),
         ).filter_by(id=id).first()
         } 
 

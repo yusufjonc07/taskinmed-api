@@ -39,11 +39,11 @@ def get_all_patients(search, page, limit, usr, db):
         )
 
     return pats.options(
-        joinedload('state'),
-        joinedload('region'),
-        joinedload('source'),
-        joinedload('partner'),
-        joinedload('partner_employee'),
+        joinedload(Patient.state),
+        joinedload(Patient.region),
+        joinedload(Patient.source),
+        joinedload(Patient.partner),
+        joinedload(Patient.partner_employee),
         joinedload(Patient.user).load_only(
             User.name,
             User.phone,

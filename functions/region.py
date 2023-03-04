@@ -16,7 +16,7 @@ def get_all_regions(page, limit, usr, db):
     else:
         offset = (page-1) * limit
 
-    return db.query(Region).options(joinedload('states')).order_by(Region.id.desc()).offset(offset).limit(limit).all()
+    return db.query(Region).options(joinedload(Region.states)).order_by(Region.id.desc()).offset(offset).limit(limit).all()
 
 
 def read_region(id, usr, db):

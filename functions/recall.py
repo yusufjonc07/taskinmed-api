@@ -21,9 +21,9 @@ def get_all_recalls(patient_id, from_date, to_date, queue, completed, page, limi
         offset = (page-1) * limit
 
     recalls = db.query(Recall).options(
-        joinedload('patient'),
-        joinedload('operator'),
-        joinedload("queue").subqueryload("*"),
+        joinedload(Recall.patient'),
+        joinedload(Recall.operator'),
+        joinedload(Recall.queue).subqueryload("*"),
     )
 
     recalls = recalls.filter_by(status=completed)

@@ -19,7 +19,7 @@ def get_all_illness_comments(illness_id, search, page, limit, usr, db):
         offset = (page-1) * limit
 
     qs = db.query(Illness_Comment).options(
-        joinedload("service")
+        joinedload(Illness_Comment.service)
     ).filter_by(illness_id=illness_id)
        
 

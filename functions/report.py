@@ -9,9 +9,11 @@ from models.partner import Partner
 from models.partner_employee import Partner_Employee
 from models.user import User
 from models.doctor import Doctor
+from models.recipe import Recipe
 from models.income import Income
 from models.expence import Expence
 from sqlalchemy.orm import joinedload
+from models.diagnosis import Diagnosis
 
 
 def get_patentsrep_count(from_date, to_date, st_id, usr, db):
@@ -137,15 +139,15 @@ def get_states_report(st_id, from_date, to_date, page, limit,  usr, db):
         .join(Queue.patient) \
         .join(Queue.doctor) \
         .options(
-            joinedload('doctor').subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload(Doctor.user).load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient'),
-            joinedload('service'),
-            joinedload('diagnosiss') \
-            .subqueryload('recipes') \
-            .subqueryload('drug'),
+            joinedload(Queue.patient),
+            joinedload(Queue.service),
+            joinedload(Queue.diagnosiss) \
+            .subqueryload(Diagnosis.recipes) \
+            .subqueryload(Recipe.drug),
         ).filter(
             Patient.state_id == st_id,
             func.date(Queue.created_at) >= from_date,
@@ -165,15 +167,15 @@ def get_services_report(srv_id, from_date, to_date, page, limit,  usr, db):
 
     queues = db.query(Queue) \
         .options(
-            joinedload('doctor').subqueryload('user').load_only(
+            joinedload(Queue.doctor).subqueryload(Doctor.user).load_only(
                 User.name,
                 User.phone,
             ),
-            joinedload('patient'),
-            joinedload('service'),
-            joinedload('diagnosiss') \
-            .subqueryload('recipes') \
-            .subqueryload('drug'),
+            joinedload(Queue.patient),
+            joinedload(Queue.service),
+            joinedload(Queue.diagnosiss) \
+            .subqueryload(Diagnosis.recipes) \
+            .subqueryload(Recipe.drug),
         ).filter(
             Queue.service_id == srv_id,
             func.date(Queue.created_at) >= from_date,

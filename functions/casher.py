@@ -24,8 +24,8 @@ def get_all_cashers(user_id, page, limit, usr, db):
 
 
     casher = db.query(Casher).options(
-        joinedload('cashreg'),
-        subqueryload('user').load_only(
+        joinedload(Casher.cashreg),
+        subqueryload(Casher.user).load_only(
             User.name,
             User.disabled,
             User.phone,

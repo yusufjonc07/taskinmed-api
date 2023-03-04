@@ -43,7 +43,7 @@ async def get_recipe_templates_list(
             raise HTTPException(status_code=400, detail="Tashxis topilmadi")
 
         recipes = db.query(Recipe_Template).options(
-            joinedload("drug")
+            joinedload(Recipe_Template.drug)
         ).filter_by(illness_id=illness_id)
         
 

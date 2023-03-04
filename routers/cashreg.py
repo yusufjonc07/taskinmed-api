@@ -69,7 +69,7 @@ async def get_cash_and_balance(
             incomes_data = incomes.filter(
                     Income.cashreg_id == id, 
                     Income.taken==False
-                ).options(joinedload('patient'), joinedload('queue').subqueryload('service')).order_by(Income.created_at.desc())
+                ).options(joinedload(Income.patient), joinedload(Income.queue).subqueryload(Queue.service)).order_by(Income.created_at.desc())
 
             if not balance: 
                 balance = 0

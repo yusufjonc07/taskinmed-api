@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from db import get_db, ActiveSession
 from models.user import User
+from models.doctor import Doctor
 from settings import *
 import random
 from sqlalchemy.orm import joinedload
@@ -99,7 +100,7 @@ async def get_current_active_user(current_user: UserSchema = Depends(get_current
 
 @auth_router.get("/me")
 async def get_me(usr: UserSchema = Depends(get_current_active_user), db: Session = Depends(get_db)):
-    user = db.query(User).options(joinedload('doctors').subqueryload('service')).filter_by(id=usr.id).first()
+    user = db.query(User).options(joinedload(User.doctors).subqueryload(Doctor.service)).filter_by(id=usr.id).first()
     return user
 
 
