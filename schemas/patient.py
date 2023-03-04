@@ -21,6 +21,8 @@ class NewPatient(BaseModel):
     state_id: int
     region_id: int
     source_id: int
+    partner_id: int
+    partner_employee_id: int
     phone: int
     queue: List[NewQueue]
 
@@ -43,6 +45,8 @@ class UpdatePatient(BaseModel):
     state_id: int
     region_id: int
     source_id: int
+    partner_id: int
+    partner_employee_id: int
     phone: int
 
 class PhoneUnique(BaseModel):

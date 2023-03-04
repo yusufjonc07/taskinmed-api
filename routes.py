@@ -21,11 +21,13 @@ from routers.recall import recall_router
 from routers.illness import illness_router
 # from routers.illness_comment import illness_comment_router
 from routers.recipe_template import recipe_template_router
+from routers.partner import partner_router
 
 
 ActiveUser = Depends(get_current_active_user)
 routes = APIRouter(dependencies=[ActiveUser])
 
+routes.include_router(partner_router)
 routes.include_router(recipe_template_router)
 routes.include_router(recall_router)      
 routes.include_router(report_router)      

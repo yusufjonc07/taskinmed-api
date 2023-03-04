@@ -5,6 +5,8 @@ from sqlalchemy import func
 from models.queue import Queue
 from models.service import Service
 from models.patient import Patient
+from models.partner import Partner
+from models.partner_employee import Partner_Employee
 from models.user import User
 from models.doctor import Doctor
 from models.income import Income
@@ -36,7 +38,7 @@ def get_report_index(from_date, to_date, usr, db):
 
     # servises
 
-    serrep = db.query(func.count(Queue.id).label("count"), Service.name, Service.id) \
+    serrep = db.query(func.count(Queue.id).label("count"), Service.name, Service.id).select_from(Service) \
         .join(Service.queues) \
         .filter(
             func.date(Queue.created_at) >= from_date,
@@ -67,6 +69,26 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) <= to_date,
         ) \
         .group_by(Source.id)
+
+    partners = db.query(func.count(Queue.id).label("count"), Partner.id, Partner.name) \
+        .join(Partner.patients) \
+        .join(Patient.queues) \
+        .filter(
+            Queue.step > 0,
+            func.date(Queue.created_at) >= from_date,
+            func.date(Queue.created_at) <= to_date,
+        ) \
+        .group_by(Partner.id)
+
+    partner_employees = db.query(func.count(Queue.id).label("count"), Partner_Employee.id, Partner_Employee.name, Partner.name.label('partner_name')) \
+        .join(Partner_Employee.patients) \
+        .join(Patient.queues) \
+        .filter(
+            Queue.step > 0,
+            func.date(Queue.created_at) >= from_date,
+            func.date(Queue.created_at) <= to_date,
+        ) \
+        .group_by(Partner_Employee.id)
 
     doctors = db.query(func.sum(Income.value).label("summa"), User.name) \
         .join(Income.queue) \
@@ -100,6 +122,8 @@ def get_report_index(from_date, to_date, usr, db):
         'services': serrep.all(),
         'sources': sources.all(),
         'doctors': doctors.all(),
+        'partners': partners.all(),
+        'partner_employees': partner_employees.all(),
         'income': income,
         'expence': expence,
     }

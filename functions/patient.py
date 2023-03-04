@@ -42,7 +42,9 @@ def get_all_patients(search, page, limit, usr, db):
         joinedload('state'),
         joinedload('region'),
         joinedload('source'),
-        subqueryload('user').load_only(
+        joinedload('partner'),
+        joinedload('partner_employee'),
+        joinedload(Patient.user).load_only(
             User.name,
             User.phone,
         ),
@@ -73,6 +75,8 @@ def create_patient(form_data, usr, db):
         source_id=form_data.source_id,
         phone=form_data.phone,
         user_id=usr.id,
+        partner_id=form_data.partner_id,
+        partner_employee_id=form_data.partner_employee_id,
     )
 
     db.add(new_patient)
@@ -98,6 +102,8 @@ def update_patient(id, form_data, usr, db):
             Patient.region_id: form_data.region_id,
             Patient.source_id: form_data.source_id,
             Patient.phone: form_data.phone,
+            Patient.partner_id: form_data.partner_id,
+            Patient.partner_employee_id: form_data.partner_employee_id,
             Patient.user_id: usr.id,
             Patient.upt: True,
         })

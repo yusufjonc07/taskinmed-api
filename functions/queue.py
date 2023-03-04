@@ -30,10 +30,10 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
         offset = (page-1) * limit
 
     qs = db.query(Queue) \
-        .join(Queue.service, aliased=True) \
-        .join(Queue.patient, aliased=True) \
-        .join(Queue.doctor, aliased=True) \
-        .join(Doctor.user, aliased=True) \
+        .join(Queue.service) \
+        .join(Queue.patient) \
+        .join(Queue.doctor) \
+        .join(Doctor.user) \
         .options(
             joinedload('doctor').subqueryload('user').load_only(
                 User.name,
@@ -80,10 +80,10 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
 def read_queue(id, usr, db):
 
     this_queue = db.query(Queue) \
-        .join(Queue.service, aliased=True) \
-        .join(Queue.patient, aliased=True) \
-        .join(Queue.doctor, aliased=True) \
-        .join(Doctor.user, aliased=True) \
+        .join(Queue.service) \
+        .join(Queue.patient) \
+        .join(Queue.doctor) \
+        .join(Doctor.user) \
         .options(
             joinedload('doctor').subqueryload('user').load_only(
                 User.name,

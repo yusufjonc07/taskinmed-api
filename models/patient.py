@@ -2,6 +2,8 @@ from models.state import *
 from models.region import * 
 from models.source import * 
 from models.user import * 
+from models.partner import * 
+from models.partner_employee import * 
 from sqlalchemy.orm import backref
 
 from datetime import datetime 
@@ -24,6 +26,8 @@ class Patient(Base):
     state_id = Column(Integer, ForeignKey('state.id'), default=0)
     region_id = Column(Integer, ForeignKey('region.id'), default=0)
     source_id = Column(Integer, ForeignKey('source.id'), default=0)
+    partner_employee_id = Column(Integer, ForeignKey('partner_employee.id'), default=0)
+    partner_id = Column(Integer, ForeignKey('partner.id'), default=0)
     phone = Column(Integer,  unique=True)
     created_at = Column(DateTime, default=now_sanavaqt)
     updated_at = Column(DateTime, default=now_sanavaqt)
@@ -34,4 +38,6 @@ class Patient(Base):
     region = relationship('Region', backref='patients', lazy="joined")
     source = relationship('Source', backref='patients')
     user = relationship('User', backref='patients')       
+    partner = relationship('Partner', backref='patients')       
+    partner_employee = relationship('Partner_Employee', backref='patients')       
     
