@@ -20,7 +20,7 @@ class Patient(Base):
     name = Column(String, default='')
     surename = Column(String, default='')
     fathername = Column(String, default='')
-    gender = Column(String, default='erkak')
+    gender = Column(String, default='unknown')
     age = Column(Date)
     address = Column(String, default='')
     state_id = Column(Integer, ForeignKey('state.id'), default=0)
