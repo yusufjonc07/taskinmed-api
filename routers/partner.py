@@ -51,7 +51,7 @@ async def get_regions_list(
         ).filter_by(disabled=False)
 
         if source_id > 0:
-            partners = partners.filter_by(patient_id=source_id)
+            partners = partners.filter_by(source_id=source_id)
         
         partners = partners.order_by(Partner.name.asc()).offset(offset).limit(limit)
 
