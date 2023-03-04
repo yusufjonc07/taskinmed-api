@@ -14,6 +14,7 @@ from models.income import Income
 from models.expence import Expence
 from sqlalchemy.orm import joinedload
 from models.diagnosis import Diagnosis
+from json import JSONEncoder
 
 
 def get_patentsrep_count(from_date, to_date, st_id, usr, db):
@@ -48,10 +49,16 @@ def get_report_index(from_date, to_date, usr, db):
         ) \
         .group_by(Service.id)
         
+    serrep_res = []
+    for one in serrep.all():
+        serrep_res.append({
+            "id":one.id,
+            "name":one.name,
+            "count":one.count,
+        })
 
-    # patients by states
 
-    patrep = db.query(func.count(Queue.id).label("count"), State.id, State.name) \
+    patrep = db.query(func.count(Queue.id).label("count"), State.id, State.name).select_from(State) \
         .join(State.patients) \
         .join(Patient.queues) \
         .filter(
@@ -60,7 +67,15 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) <= to_date,
         ) \
         .group_by(State.id)
-        
+    
+    patrep_res = []
+    for one in patrep.all():
+        patrep_res.append({
+            "id":one.id,
+            "name":one.name,
+            "count":one.count,
+        })
+       
 
     sources = db.query(func.count(Queue.id).label("count"), Source.id, Source.name) \
         .join(Source.patients) \
@@ -71,6 +86,14 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) <= to_date,
         ) \
         .group_by(Source.id)
+    
+    sources_res = []
+    for one in sources.all():
+        sources_res.append({
+            "id":one.id,
+            "name":one.name,
+            "count":one.count,
+        })
 
     partners = db.query(func.count(Queue.id).label("count"), Partner.id, Partner.name) \
         .join(Partner.patients) \
@@ -81,6 +104,14 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) <= to_date,
         ) \
         .group_by(Partner.id)
+    
+    partners_res = []
+    for one in partners.all():
+        partners_res.append({
+            "id":one.id,
+            "name":one.name,
+            "count":one.count,
+        })
 
     partner_employees = db.query(func.count(Queue.id).label("count"), Partner_Employee.id, Partner_Employee.name, Partner.name.label('partner_name')) \
         .join(Partner_Employee.patients) \
@@ -91,6 +122,14 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Queue.created_at) <= to_date,
         ) \
         .group_by(Partner_Employee.id)
+    
+    partner_employees_res = []
+    for one in partner_employees.all():
+        partner_employees_res.append({
+            "id":one.id,
+            "name":one.name,
+            "count":one.count,
+        })
 
     doctors = db.query(func.sum(Income.value).label("summa"), User.name) \
         .join(Income.queue) \
@@ -102,6 +141,13 @@ def get_report_index(from_date, to_date, usr, db):
             func.date(Income.created_at) <= to_date,
         ) \
         .group_by(User.id)
+    
+    doctors_res = []
+    for one in doctors.all():
+        doctors_res.append({
+            "name":one.name,
+            "count":one.count,
+        })
         
 
     
@@ -120,12 +166,12 @@ def get_report_index(from_date, to_date, usr, db):
 
 
     return {
-        'states': patrep.all(),
-        'services': serrep.all(),
-        'sources': sources.all(),
-        'doctors': doctors.all(),
-        'partners': partners.all(),
-        'partner_employees': partner_employees.all(),
+        'states': patrep_res,
+        'services': serrep_res,
+        'sources': sources_res,
+        'doctors': doctors_res,
+        'partners': partners_res,
+        'partner_employees': partner_employees_res,
         'income': income,
         'expence': expence,
     }
