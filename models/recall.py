@@ -24,7 +24,7 @@ class Recall(Base):
     __tablename__ = "recall"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     patient_id = Column(Integer, ForeignKey('patient.id'), default=0)
-    plan_date = Column(DateTime)
+    plan_date = Column(DateTime, default=now_sanavaqt)
     created_at = Column(DateTime, default=now_sanavaqt)
     status = Column(Boolean, default=False)
     comment = Column(String(255), default="")

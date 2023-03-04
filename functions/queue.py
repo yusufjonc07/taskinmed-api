@@ -12,7 +12,8 @@ from models.recall import Recall
 from models.recipe import Recipe
 from models.patient import Patient, now_sanavaqt
 from manager import *
-from sqlalchemy import or_
+from sqlalchemy import or_, func
+from sqlalchemy.orm import Session
 import math
 from trlatin import tarjima
 from datetime import timedelta, datetime
@@ -79,7 +80,9 @@ def get_all_queues(page, limit, usr, db, step, search, patient_id):
         "limit": limit,
     }
 
-def read_queue(id, usr, db):
+def read_queue(id, usr, db: Session):
+
+    
 
     this_queue = db.query(Queue) \
         .join(Queue.service) \
@@ -97,8 +100,11 @@ def read_queue(id, usr, db):
             .subqueryload(Diagnosis.recipes) \
             .subqueryload(Recipe.drug),
         ).filter(Queue.id == id).first()
+    
 
     if this_queue:
+        queue_count = db.query(Queue).filter(Queue.doctor_id == this_queue.doctor_id, Queue.step > 0, Queue.patient_id==this_queue.patient_id).count()
+        this_queue.queue_count = queue_count
         return this_queue
     else:
         raise HTTPException(status_code=400, detail="Queue topilmadi!")
@@ -214,14 +220,14 @@ def complete_diagnosis_finish(id, usr, db):
 
         setting = db.query(Setting).first()
 
-        if setting:
-            ADDING_HOURS = setting.recall_hour
-        else:
-            ADDING_HOURS = 3
+        # if setting:
+        #     ADDING_HOURS = setting.recall_hour
+        # else:
+        #     ADDING_HOURS = 3
 
         new_recall = Recall(
             patient_id=theque.patient_id,
-            plan_date=(now_sanavaqt+timedelta(hours=ADDING_HOURS)),
+            # plan_date=(now_sanavaqt+timedelta(hours=ADDING_HOURS)),
             user_id=usr.id,
             queue_id = theque.id
         )
