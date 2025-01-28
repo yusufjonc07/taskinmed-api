@@ -1,0 +1,79 @@
+[project]
+name = "seollal-bootcamp-base"
+description = "A base project for the Seollal bootcamp"
+version = "0.1.0"
+authors = [
+    { name = "Bryan \"Beege\" Berry", email = "beege@codeseoul.org" },
+    { name = "Jaeyoon \"Jason\" Cho", email = "jaeyoon.cho@codeseoul.org" }
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "alembic",
+    "pydantic_settings",
+    "pytest",
+    "httpx",
+    "pymysql",
+    "pyjwt",
+    "psycopg2-binary",
+    "python-multipart",
+    "email-validator",
+    "passlib[bcrypt]"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "ruff",
+]
+
+[project.scripts]
+run = "app.main:main"
+
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+lint.select = ["E", "F", "I001"]
+lint.ignore = []
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+lint.fixable = ["A", "B", "C", "D", "E", "F", "I001"]
+lint.unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+lint.per-file-ignores = {}
+
+# Same as Black.
+line-length = 120
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.12.
+target-version = "py312"
+
+[tool.ruff.lint.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 50
