@@ -13,7 +13,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "example" {
   name     = "example-resources"
-  location = "Korea South"
+  location = "Korea Central"
 }
 
 resource "azurerm_service_plan" "example" {

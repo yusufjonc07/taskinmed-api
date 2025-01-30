@@ -18,7 +18,9 @@ dependencies = [
     "psycopg2-binary",
     "python-multipart",
     "email-validator",
-    "passlib[bcrypt]"
+    "passlib[bcrypt]",
+    "prometheus-client",
+    "prometheus_fastapi_instrumentator"
 ]
 
 [project.optional-dependencies]

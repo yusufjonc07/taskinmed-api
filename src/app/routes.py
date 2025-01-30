@@ -24,8 +24,11 @@ from app.routers.recipe_template import recipe_template_router
 from app.routers.partner import partner_router
 
 
+
 ActiveUser = Depends(get_current_active_user)
+
 routes = APIRouter(dependencies=[ActiveUser])
+
 
 routes.include_router(partner_router)
 routes.include_router(recipe_template_router)

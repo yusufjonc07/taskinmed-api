@@ -1,10 +1,12 @@
 services:
-  clinic_service:
+  taskinmed-server:
     build: ./
     ports:
       - 80:8000
     depends_on:
       - database
+    networks:
+      - bootcamp-network
   database:
     image: postgres:17-alpine
     environment:
@@ -21,6 +23,8 @@ services:
       # - type: bind
       #   source: database_init
       #   target: /docker-entrypoint-initdb.d
+    networks:
+      - bootcamp-network
 
   db_ui:
     image: shyim/adminerevo
@@ -34,6 +38,13 @@ services:
       ADMINER_DEFAULT_USER: root
       ADMINER_DEFAULT_PASSWORD: root
       ADMINER_DESIGN: dracula
+    networks:
+      - bootcamp-network
 
 volumes:
   data:
+
+networks:
+  bootcamp-network:
+    name: bootcamp-network
+    external: true
