@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir --upgrade . &&\
 # Set the default port to 80, as that's the default HTTP port
 ENV PORT=80
 
-EXPOSE 8778
+EXPOSE 8000
 
 # Run our app by default
-CMD ["python", "-m", "app"]
+CMD ["python", "-m", "app"]% 
