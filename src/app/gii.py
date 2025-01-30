@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 gii_router = APIRouter()
 
-@gii_router.get("/generate_full_project")
+@gii_router.get("/generate_full_project_at")
 async def get_home(db: Session = ActiveSession):
 
     inspector = inspect(engine)
